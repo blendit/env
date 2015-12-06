@@ -1,6 +1,13 @@
 class Feature():
     """The Feature class. Things like landscapes, water, ... will inherit from this call"""
 
+    coord_x
+    coord_y
+        """Center coordinates"""
+
+    radius
+        """Feature radius"""
+
     def __init__(self):
         pass
 
