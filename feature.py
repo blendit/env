@@ -1,5 +1,6 @@
 class Feature():
-    """The Feature class. Things like landscapes, water, ... will inherit from this call"""
+    """The Feature class.
+    Things like landscapes, water, ... will inherit from this call"""
 
     coord_x
     coord_y
@@ -22,3 +23,6 @@ class Feature():
     def influence_weight(self, coord):
         """Export influence heightmap"""
         pass
+
+class FeatureLine(Feature):
+    """Feature corresponding to a linear zone: new functions to manipulate the curve of the feature."""
