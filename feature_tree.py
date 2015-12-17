@@ -14,7 +14,7 @@ class FeatureTree:
         pass
 
 
-def Node:
+class Node:
     '''Abstract class for nodes in the feature tree'''
 
     def z(self, pos):
@@ -37,7 +37,7 @@ class BlendNode:
                              weight=(c.influence(pos) for c in self.children))
 
     def influence(self, pos):
-        return numpy.sum(c.influence(pos) for self.children)
+        return numpy.sum(c.influence(pos) for c in self.children)
 
 
 class ReplaceNode:
