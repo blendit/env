@@ -1,4 +1,4 @@
-from sympy import Polygon
+from shapely.geometry import Polygon
 
 
 class Feature():
@@ -6,14 +6,17 @@ class Feature():
     Things like landscapes, water, ... will inherit from this call"""
 
     def __init__(self):
-        coord_x = 0
-        coord_y = 0
+        self.coord_x = 0
+        self.coord_y = 0
+
+        self.shape = Polygon()
         
         pass
 
     def intersect(self, feature2):
-        """Intersection of two features (self and feature 2). NB: this should be symmetric """
-        pass
+        """Returns *true* if the feature intersects *feature2*.
+        NB: this should be symmetric."""
+        return shape.intersects(feature2.shape)
 
     def z(self, coord):
         """Export the heightmap given a feature and a plane coordinate"""
