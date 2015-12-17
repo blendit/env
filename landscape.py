@@ -1,5 +1,7 @@
 from numpy import random
 
+from feature import Feature
+
 
 class Landscape(Feature):
     """Landscape class"""

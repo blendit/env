@@ -1,3 +1,6 @@
+from feature import Feature
+
+
 class Water(Feature):
     """Water class"""
 
