@@ -1,15 +1,14 @@
+from sympy import Polygon
+
+
 class Feature():
     """The Feature class.
     Things like landscapes, water, ... will inherit from this call"""
 
-    coord_x
-    coord_y
-        """Center coordinates"""
-
-    radius
-        """Feature radius"""
-
     def __init__(self):
+        coord_x = 0
+        coord_y = 0
+        
         pass
 
     def intersect(self, feature2):
@@ -23,6 +22,7 @@ class Feature():
     def influence_weight(self, coord):
         """Export influence heightmap"""
         pass
+
 
 class FeatureLine(Feature):
     """Feature corresponding to a linear zone: new functions to manipulate the curve of the feature."""
