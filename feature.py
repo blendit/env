@@ -12,8 +12,6 @@ class Feature():
         self.coord_y = 0
 
         self.shape = Polygon()
-        
-        pass
 
     def intersect(self, feature2):
         """Returns *true* if the feature intersects *feature2*.
