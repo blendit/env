@@ -28,7 +28,7 @@ class Mountain(Landscape):
 
     def z(self, coord):
         """Generation of a height given a plane coordinate. Formula from [GGP+15], subsection 4.1"""
-        return cz + sum(a_i * noise_gen((coord[0] - center_coord[0], coord[1] - center_coord[1])) * s_i for (a_i, s_i) in zip(a, f))
+        return cz + sum(a_i * noise_gen((coord[0] - center_coord[0], coord[1] - center_coord[1]) * s_i) for (a_i, s_i) in zip(a, f))
 
 
 class Roads(Feature):
