@@ -1,6 +1,7 @@
 import numpy
 from exception import EnvironmentException
 
+
 class IntersectError(EnvironmentException):
     """Error intersecting two incompatible features."""
     def __init__(self, msg="Intersecting two incompatible features"):
@@ -18,11 +19,11 @@ class FeatureTree:
         '''Initialize the tree from the list of features'''
         for feature in self.features:
             if feature.interaction() == "blend":
-                continue # We don't care about blend nodes, they will be at the top of the tree anyway
+                continue  # We don't care about blend nodes, they will be at the top of the tree anyway
 
             intersect = []
             intersect_type = "blend"
-            for feature2 in self.features: # Search for intersections
+            for feature2 in self.features:  # Search for intersections
                 if feature.intersect(feature2):
                     intersect.append(feature2)
                     if feature2.interaction() != "blend":
@@ -34,8 +35,8 @@ class FeatureTree:
 
 
 class Node(Feature):
-    '''Abstract class for nodes in the feature tree.  
-    Leaves of the tree are Feature and internal nodes must be specific nodes (Blend, Replace or Add).'''   
+    '''Abstract class for nodes in the feature tree.
+    Leaves of the tree are Feature and internal nodes must be specific nodes (Blend, Replace or Add).'''
 
     def z(self, pos):
         '''Height at a given position'''
