@@ -1,4 +1,6 @@
 import numpy
+from shapely.ops import cascaded_union
+from feature import Feature
 from exception import EnvironmentException
 
 
@@ -11,32 +13,50 @@ class IntersectError(EnvironmentException):
 class FeatureTree:
     '''Tree structure for features'''
     def __init__(self, features):
-        self.features = list(features)
-        self.tree = None
+        self.features = set(features)
+        self.trees = []
         self.init_tree()
 
     def init_tree(self):
         '''Initialize the tree from the list of features'''
-        for feature in self.features:
-            if feature.interaction() == "blend":
-                continue  # We don't care about blend nodes, they will be at the top of the tree anyway
+        #TODO: first loop initializng nodes
+        
+        while len(self.features)>1:
+            a = self.features.pop()
+            b = intersecting(a, self.features)
 
-            intersect = []
-            intersect_type = "blend"
-            for feature2 in self.features:  # Search for intersections
-                if feature.intersect(feature2):
-                    intersect.append(feature2)
-                    if feature2.interaction() != "blend":
-                        if intersect_type != blend:
-                            raise IntersectError()
-                        else:
-                            intersect_type = feature2.interaction()
-        pass
+            if a==b:
+                trees.append(a)
+            else:  # There is a different feature intersecting
+                self.features |= {fusion_tree(a,b)}
+            
+            
+    def intersecting(self, node, node_list):
+        """Returuns one node in the list that is intersecting the *node*. If none exists, returns the node."""
+        for n in node_list:
+            if node.intersect(n):
+                return n
+                
+        return node
 
+
+    def fusion_tree(a, b):
+        if isinstance(a, ReplaceNode) or isinstance(a, AdditionNode):
+            a.add_child(b)
+        else:
+            b.add_child(a)
+        
 
 class Node(Feature):
     '''Abstract class for nodes in the feature tree.
     Leaves of the tree are Feature and internal nodes must be specific nodes (Blend, Replace or Add).'''
+
+    def __init__(self, children=[]):
+        self.children = children
+
+    def add_child(child):
+        self.children.append(child)
+        self.shape.union(child.shape)
 
     def z(self, pos):
         '''Height at a given position'''
@@ -50,8 +70,8 @@ class Node(Feature):
 class BlendNode(Node):
     '''Node that blends its children'''
 
-    def __init__(self, children):
-        self.children = list(children)
+    def __init__(self, children=[]):
+        self.add_children(list(children))
 
     def z(self, pos):
         return numpy.average((c.z(pos) for c in self.children),
@@ -67,6 +87,8 @@ class ReplaceNode(Node):
     def __init__(self, background, foreground):
         self.background = background
         self.foreground = foreground
+        self.shape = background.shape
+        self.shape.union(foreground.shape)
 
     def z(self, pos):
         alpha = self.foreground.influence(pos)
@@ -75,6 +97,9 @@ class ReplaceNode(Node):
     def influence(self, pos):
         return self.background.influence(pos)
 
+    def add_child(self, node):
+        self.background.add_child(node)
+
 
 class AdditionNode(Node):
     '''Node that adds a feature on top of another one'''
@@ -82,6 +107,8 @@ class AdditionNode(Node):
     def __init__(self, background, foreground):
         self.background = background
         self.foreground = foreground
+        self.shape = background.shape
+        self.shape.union(foreground.shape)
 
     def z(self, pos):
         return self.background.z(pos) + self.foreground.influence(pos) * self.foreground.z(pos)
