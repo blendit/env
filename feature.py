@@ -29,9 +29,9 @@ class Feature():
     def interaction(self):
         """Give the interaction type of the feature with other features.
         Can be:
-        * "Blend" (default): the mean with the other features
-        * "Replace": one feature erase one other (**only two features**)
-        * "Addition": add one feature over another (**only two features**)."""
+        * "blend" (default): the mean with the other features
+        * "replace": one feature erase one other (**only two features**)
+        * "addition": add one feature over another (**only two features**)."""
         return "Blend"
 
 
@@ -40,7 +40,7 @@ class FeatureLine(Feature):
     def interaction(self):
         """Give the interaction type of the feature with other features.
         Can be:
-        * "Blend": the mean with the other features
-        * "Replace" (default for FeatureLine): one feature erase one other (**only two features**)
-        * "Addition": add one feature over another (**only two features**)."""
+        * "blend": the mean with the other features
+        * "replace" (default for FeatureLine): one feature erase one other (**only two features**)
+        * "addition": add one feature over another (**only two features**)."""
         return "Replace"
