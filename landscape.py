@@ -1,6 +1,6 @@
 from numpy import random
 
-from feature import Feature
+from feature import Feature, FeatureLine
 
 
 class Landscape(Feature):
@@ -38,7 +38,7 @@ class Mountain(Landscape):
         return 1
     
 
-class Roads(Feature):
+class Roads(FeatureLine):
     """Roads class"""
 
     def __init__(self):
