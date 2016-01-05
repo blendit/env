@@ -22,10 +22,25 @@ class Feature():
         """Export the heightmap given a feature and a plane coordinate"""
         pass
 
-    def influence_weight(self, coord):
+    def influence(self, coord):
         """Export influence heightmap"""
         pass
+
+    def interaction(self):
+        """Give the interaction type of the feature with other features.
+        Can be:
+        * "Blend" (default): the mean with the other features
+        * "Replace": one feature erase one other (**only two features**)
+        * "Addition": add one feature over another (**only two features**)."""
+        return "Blend"
 
 
 class FeatureLine(Feature):
     """Feature corresponding to a linear zone: new functions to manipulate the curve of the feature."""
+    def interaction(self):
+        """Give the interaction type of the feature with other features.
+        Can be:
+        * "Blend": the mean with the other features
+        * "Replace" (default for FeatureLine): one feature erase one other (**only two features**)
+        * "Addition": add one feature over another (**only two features**)."""
+        return "Replace"
