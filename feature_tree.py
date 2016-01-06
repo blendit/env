@@ -19,8 +19,23 @@ class FeatureTree:
 
     def init_tree(self):
         '''Initialize the tree from the list of features'''
-        # TODO: first loop initializng nodes
+        # Initialize features as nodes
+        # Feature which merge as 'blend' do not need any special node
+        for feat in self.features:
+            if feat.interaction() != "blend":
+                background = intersecting(feat, self.features)
+                node = None
+
+                if feat.ineraction() == "replace":
+                    node = ReplaceNode(background, feat)
+                elif feat.interaction() == "addition":
+                    node = AdditionNode(background, feat)
+                
+                self.features.remove(background)
+                self.features.remove(feat)
+                self.features.append(node)
         
+        # Construct the tree
         while len(self.features) > 1:
             a = self.features.pop()
             b = intersecting(a, self.features)
@@ -29,6 +44,9 @@ class FeatureTree:
                 trees.append(a)
             else:  # There is a different feature intersecting
                 self.features |= {fusion_tree(a, b)}
+
+        # Finally, set the disjoint trees as one unique tree
+        self.tree = BlendNode(self.trees)
             
     def intersecting(self, node, node_list):
         """Returuns one node in the list that is intersecting the *node*. If none exists, returns the node."""
