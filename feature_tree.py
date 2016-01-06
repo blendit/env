@@ -19,17 +19,16 @@ class FeatureTree:
 
     def init_tree(self):
         '''Initialize the tree from the list of features'''
-        #TODO: first loop initializng nodes
+        # TODO: first loop initializng nodes
         
-        while len(self.features)>1:
+        while len(self.features) > 1:
             a = self.features.pop()
             b = intersecting(a, self.features)
 
-            if a==b:
+            if a == b:
                 trees.append(a)
             else:  # There is a different feature intersecting
-                self.features |= {fusion_tree(a,b)}
-            
+                self.features |= {fusion_tree(a, b)}
             
     def intersecting(self, node, node_list):
         """Returuns one node in the list that is intersecting the *node*. If none exists, returns the node."""
@@ -38,7 +37,6 @@ class FeatureTree:
                 return n
                 
         return node
-
 
     def fusion_tree(a, b):
         if isinstance(a, ReplaceNode) or isinstance(a, AdditionNode):
