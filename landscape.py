@@ -1,4 +1,7 @@
+import numpy
 from numpy import random
+import shapely.geometry as geom
+
 from feature import Feature, FeatureLine
 
 
@@ -17,24 +20,25 @@ class Mountain(Landscape):
     def default_noise(coord):
         return default_noise_grid[coord]
 
-    def __init__(self, r, center_z, center_coord=(0, 0), noise=default_noise, f=[0.1, 0.2], a=[1, 2]):
-        """NB: len(f) should equal len(a)
-        The shape of the circle is approximated into a square..."""
-        radius = r
-        cz = center_z
-        coord_x, coord_y = center_coord
-        shape = Polygon([(coord_x + radius, coord_y + radius), (coord_x - radius, coord_y + radius), (coord_x - radius, coord_y - radius), (coord_x + radius, coord_y - radius)])
-        noise_gen = default_noise
-        frequencies = f
-        amplitudes = a
-        
+    def __init__(self, radius, center_z, center_pos=(0, 0), freqs=[0.1, 0.2], amplis=[1, 2], noise=default_noise):
+        """NB: len(freqs) should equal len(amplis)"""
+        self.radius = radius
+        center = geom.Point(*center_pos)
+        self.center_pos = numpy.array(center)
+        self.center_z = center_z
+        # By default, buffer approximates the circle with a regular 16-gon
+        self.shape = center.buffer(radius)
+        self.noise = noise
+        self.freqs = freqs
+        self.amplis = amplis
+
     def z(self, coord):
         """Generation of a height given a plane coordinate. Formula from [GGP+15], subsection 4.1"""
-        return cz + sum(a_i * noise_gen((coord[0] - center_coord[0], coord[1] - center_coord[1]) * s_i) for (a_i, s_i) in zip(a, f))
+        return self.center_z + sum(a_i * self.noise((self.center_pos - coord) * s_i) for (a_i, s_i) in zip(self.amplis, self.freqs))
 
     def influence_weight(self, coord):
         return 1
-    
+
 
 class Roads(FeatureLine):
     """Roads class"""
