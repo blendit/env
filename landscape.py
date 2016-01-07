@@ -1,5 +1,4 @@
 from numpy import random
-
 from feature import Feature
 
 
@@ -24,11 +23,10 @@ class Mountain(Landscape):
         radius = r
         cz = center_z
         coord_x, coord_y = center_coord
-        shape = Polygon([(coord_x+radius, coord_y+radius), (coord_x-radius, coord_y+radius), (coord_x-radius, coord_y-radius), (coord_x+radius, coord_y-radius)])
+        shape = Polygon([(coord_x + radius, coord_y + radius), (coord_x - radius, coord_y + radius), (coord_x - radius, coord_y - radius), (coord_x + radius, coord_y - radius)])
         noise_gen = default_noise
         frequencies = f
         amplitudes = a
-        
         
     def z(self, coord):
         """Generation of a height given a plane coordinate. Formula from [GGP+15], subsection 4.1"""

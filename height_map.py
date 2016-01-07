@@ -5,7 +5,7 @@ class HeightMap:
         """Default initialization of the map: every point at z = 0"""
         return 0
     
-    def __init__(self, sx, sy, z_func = default_z):
+    def __init__(self, sx, sy, z_func=default_z):
         """We can pass another function to z_func to initialize directly to z_func((x,y))"""
         self.size_x = sx
         self.size_y = sy
