@@ -102,12 +102,12 @@ class ReplaceNode(Node):
     '''Node that replaces an underlying feature with an other one'''
 
     def __init__(self, background, foreground):
-        super(RelaceNode, self).__init__()
+        super(ReplaceNode, self).__init__()
         
         self.background = background
         self.foreground = foreground
         self.shape = background.shape
-        self.shape.union(foreground.shape)
+        self.shape = self.shape.union(foreground.shape)
 
     def z(self, pos):
         alpha = self.foreground.influence(pos)
@@ -129,7 +129,7 @@ class AdditionNode(Node):
         self.background = background
         self.foreground = foreground
         self.shape = background.shape
-        self.shape.union(foreground.shape)
+        self.shape = self.shape.union(foreground.shape)
 
     def z(self, pos):
         return self.background.z(pos) + self.foreground.influence(pos) * self.foreground.z(pos)
