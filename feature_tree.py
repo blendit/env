@@ -76,7 +76,7 @@ class Node(Feature):
 
     def add_child(self, child):
         self.children.append(child)
-        self.shape.union(child.shape)
+        self.shape = self.shape.union(child.shape)
 
     def z(self, pos):
         '''Height at a given position'''
