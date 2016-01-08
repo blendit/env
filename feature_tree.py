@@ -91,8 +91,8 @@ class BlendNode(Node):
     '''Node that blends its children'''
 
     def z(self, pos):
-        return numpy.average((c.z(pos) for c in self.children),
-                             weight=(c.influence(pos) for c in self.children))
+        return numpy.average([c.z(pos) for c in self.children],
+                             weights=[c.influence(pos) for c in self.children])
 
     def influence(self, pos):
         return numpy.sum(c.influence(pos) for c in self.children)
