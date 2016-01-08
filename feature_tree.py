@@ -136,3 +136,6 @@ class AdditionNode(Node):
 
     def influence(self, pos):
         return self.background.influence(pos)
+
+    def add_child(self, node):
+        self.background.add_child(node)
