@@ -68,9 +68,13 @@ class Node(Feature):
     Leaves of the tree are Feature and internal nodes must be specific nodes (Blend, Replace or Add).'''
 
     def __init__(self, children=[]):
-        self.children = children
+        super(Node, self).__init__()
+        
+        self.children = []
+        for child in children:
+            self.add_child(child)
 
-    def add_child(child):
+    def add_child(self, child):
         self.children.append(child)
         self.shape.union(child.shape)
 
@@ -86,9 +90,6 @@ class Node(Feature):
 class BlendNode(Node):
     '''Node that blends its children'''
 
-    def __init__(self, children=[]):
-        self.add_children(list(children))
-
     def z(self, pos):
         return numpy.average((c.z(pos) for c in self.children),
                              weight=(c.influence(pos) for c in self.children))
@@ -101,6 +102,8 @@ class ReplaceNode(Node):
     '''Node that replaces an underlying feature with an other one'''
 
     def __init__(self, background, foreground):
+        super(RelaceNode, self).__init__()
+        
         self.background = background
         self.foreground = foreground
         self.shape = background.shape
@@ -121,6 +124,8 @@ class AdditionNode(Node):
     '''Node that adds a feature on top of another one'''
 
     def __init__(self, background, foreground):
+        super(AdditionNode, self).__init__()
+        
         self.background = background
         self.foreground = foreground
         self.shape = background.shape
