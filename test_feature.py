@@ -2,6 +2,7 @@ import unittest
 from feature import Feature, FeatureLine
 import shapely.geometry as geom
 
+
 class FeatureTest(Feature):
     def __init__(self, x1, y1, x2, y2):
         self.shape = geom.box(x1, y1, x2, y2)
@@ -17,7 +18,7 @@ class TestFeature(unittest.TestCase):
         self.l1 = FeatureLine([(0, 0), (2, 2)], 1)
         self.l2 = FeatureLine([(0, 0), (-1, -1)], 1)
         self.l3 = FeatureLine([(0, 0), (0, -1)], 1)
-        
+
     def test_intersect_ff(self):
         """Intersection between two features"""
         self.assertFalse(self.f1.intersect(self.f2))
