@@ -16,6 +16,7 @@ class TestFeature(unittest.TestCase):
 
         self.l1 = FeatureLine([(0, 0), (2, 2)], 1)
         self.l2 = FeatureLine([(0, 0), (-1, -1)], 1)
+        self.l3 = FeatureLine([(0, 0), (0, -1)], 1)
         
     def test_intersect_ff(self):
         """Intersection between two features"""
@@ -40,6 +41,9 @@ class TestFeature(unittest.TestCase):
         """Intersection featureline/featureline"""
         self.assertFalse(self.l1.intersect(self.l2))
         self.assertFalse(self.l2.intersect(self.l1))
+
+        self.assertTrue(self.l1.intersect(self.l3))
+        self.assertTrue(self.l3.intersect(self.l1))
 
 
 if __name__ == '__main__':
