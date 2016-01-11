@@ -22,7 +22,11 @@ class FeatureTree:
         # Initialize features as nodes
         # Feature which merge as 'blend' do not need any special node
         for feat in self.features:
-            if feat.interaction() != "blend":
+            if feat.interaction() == "blend":
+                node = BlendNode([feat])
+                self.features.remove(feat)
+                self.features.append(node)
+            else:
                 background = intersecting(feat, self.features)
                 node = None
 
@@ -118,6 +122,8 @@ class ReplaceNode(Node):
 
     def add_child(self, node):
         self.background.add_child(node)
+        self.shape = self.background.shape
+        self.shape = self.shape.union(self.foreground.shape)
 
 
 class AdditionNode(Node):
@@ -139,3 +145,5 @@ class AdditionNode(Node):
 
     def add_child(self, node):
         self.background.add_child(node)
+        self.shape = self.background.shape
+        self.shape = self.shape.union(self.foreground.shape)
