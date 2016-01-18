@@ -4,6 +4,7 @@ python: "3.4"
 install:
   - "pip install pep8"
   - "pip install coveralls"
+  - "pip install shapely"
 
 before_script: "pep8 . --ignore=W293,E501"
 
