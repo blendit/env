@@ -39,17 +39,22 @@ class FeatureTree:
                 if(feat != background):
                     self.features.remove(feat)
                 self.features.append(node)
-        
+
         # Construct the tree
         trees = []
         while len(self.features) > 1:
             a = self.features.pop()
             b = self.intersecting(a, self.features)
 
+
             if a == b:
                 trees.append(a)
             else:  # There is a different feature intersecting
+                self.features.remove(b)
                 self.features.append(self.fusion_tree(a, b))
+
+        if len(self.features) == 1:
+            trees.append(self.features.pop())
 
         # Finally, set the disjoint trees as one unique tree
         self.tree = BlendNode(trees)
@@ -57,6 +62,8 @@ class FeatureTree:
     def intersecting(self, node, node_list):
         """Returuns one node in the list that is intersecting the *node*. If none exists, returns the node."""
         for n in node_list:
+            if n == node:
+                continue
             if node.intersect(n):
                 return n
                 
@@ -106,8 +113,8 @@ class BlendNode(Node):
     '''Node that blends its children'''
 
     def z(self, pos):
-        return numpy.average([c.z(pos) for c in self.children],
-                             weights=[c.influence(pos) for c in self.children])
+        return numpy.average([c.z(pos) for c in self.children if c.influence(pos) > 0],
+                             weights=[c.influence(pos) for c in self.children if c.influence(pos) > 0])
 
     def influence(self, pos):
         return numpy.sum(c.influence(pos) for c in self.children)
@@ -126,7 +133,10 @@ class ReplaceNode(Node):
 
     def z(self, pos):
         alpha = self.foreground.influence(pos)
-        return (1 - alpha) * self.background.z(pos) + alpha * self.foreground.z(pos)
+        if alpha == 0:
+            return self.background.z(pos)
+        else:
+            return (1 - alpha) * self.background.z(pos) + alpha * self.foreground.z(pos)
 
     def influence(self, pos):
         return self.background.influence(pos)
@@ -149,7 +159,11 @@ class AdditionNode(Node):
         self.shape = self.shape.union(foreground.shape)
 
     def z(self, pos):
-        return self.background.z(pos) + self.foreground.influence(pos) * self.foreground.z(pos)
+        alpha = self.foreground.influence(pos)
+        if alpha == 0:
+            return self.background.z(pos)
+        else:
+            return self.background.z(pos) + alpha * self.foreground.z(pos)
 
     def influence(self, pos):
         return self.background.influence(pos)
