@@ -32,7 +32,7 @@ class Feature():
         * "blend" (default): the mean with the other features
         * "replace": one feature erase one other (**only two features**)
         * "addition": add one feature over another (**only two features**)."""
-        return "Blend"
+        return "blend"
 
 
 class FeatureLine(Feature):
@@ -43,4 +43,4 @@ class FeatureLine(Feature):
         * "blend": the mean with the other features
         * "replace" (default for FeatureLine): one feature erase one other (**only two features**)
         * "addition": add one feature over another (**only two features**)."""
-        return "Replace"
+        return "replace"
