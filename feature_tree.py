@@ -29,7 +29,7 @@ class FeatureTree:
             else:
                 background = self.intersecting(feat, self.features)
                 node = None
-
+                
                 if feat.interaction() == "replace":
                     node = ReplaceNode(background, feat)
                 elif feat.interaction() == "addition":
@@ -45,7 +45,6 @@ class FeatureTree:
         while len(self.features) > 1:
             a = self.features.pop()
             b = self.intersecting(a, self.features)
-
 
             if a == b:
                 trees.append(a)
@@ -78,11 +77,10 @@ class FeatureTree:
             return b
 
     def z(self, pos):
-        if self.tree == None:
+        if self.tree is None:
             raise ValueError("Tree not initializated")
         else:
             return self.tree.z(pos)
-        
         
 
 class Node(Feature):
