@@ -16,7 +16,7 @@ class Feature():
     def intersect(self, feature2):
         """Returns *true* if the feature intersects *feature2*.
         NB: this should be symmetric."""
-        return shape.intersects(feature2.shape)
+        return self.shape.intersects(feature2.shape)
 
     def z(self, coord):
         """Export the heightmap given a feature and a plane coordinate"""
