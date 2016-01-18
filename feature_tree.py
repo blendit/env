@@ -52,7 +52,7 @@ class FeatureTree:
                 self.features.append(self.fusion_tree(a, b))
 
         # Finally, set the disjoint trees as one unique tree
-        self.tree = BlendNode(self.trees)
+        self.tree = BlendNode(trees)
             
     def intersecting(self, node, node_list):
         """Returuns one node in the list that is intersecting the *node*. If none exists, returns the node."""
@@ -69,6 +69,12 @@ class FeatureTree:
         else:
             b.add_child(a)
             return b
+
+    def z(self, pos):
+        if self.tree == None:
+            raise ValueError("Tree not initializated")
+        else:
+            return self.tree.z(pos)
         
         
 
