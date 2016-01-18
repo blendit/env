@@ -13,41 +13,43 @@ class IntersectError(EnvironmentException):
 class FeatureTree:
     '''Tree structure for features'''
     def __init__(self, features):
-        self.features = set(features)
-        self.trees = []
+        self.features = list(features)
+        self.tree = None
         self.init_tree()
 
     def init_tree(self):
         '''Initialize the tree from the list of features'''
         # Initialize features as nodes
         # Feature which merge as 'blend' do not need any special node
-        for feat in self.features:
+        for feat in self.features[:]:
             if feat.interaction() == "blend":
                 node = BlendNode([feat])
                 self.features.remove(feat)
                 self.features.append(node)
             else:
-                background = intersecting(feat, self.features)
+                background = self.intersecting(feat, self.features)
                 node = None
 
-                if feat.ineraction() == "replace":
+                if feat.interaction() == "replace":
                     node = ReplaceNode(background, feat)
                 elif feat.interaction() == "addition":
                     node = AdditionNode(background, feat)
                 
                 self.features.remove(background)
-                self.features.remove(feat)
+                if(feat != background):
+                    self.features.remove(feat)
                 self.features.append(node)
         
         # Construct the tree
+        trees = []
         while len(self.features) > 1:
             a = self.features.pop()
-            b = intersecting(a, self.features)
+            b = self.intersecting(a, self.features)
 
             if a == b:
                 trees.append(a)
             else:  # There is a different feature intersecting
-                self.features |= {fusion_tree(a, b)}
+                self.features.append(self.fusion_tree(a, b))
 
         # Finally, set the disjoint trees as one unique tree
         self.tree = BlendNode(self.trees)
@@ -60,11 +62,14 @@ class FeatureTree:
                 
         return node
 
-    def fusion_tree(a, b):
+    def fusion_tree(self, a, b):
         if isinstance(a, ReplaceNode) or isinstance(a, AdditionNode):
             a.add_child(b)
+            return a
         else:
             b.add_child(a)
+            return b
+        
         
 
 class Node(Feature):
