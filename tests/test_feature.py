@@ -1,5 +1,5 @@
 import unittest
-from feature import Feature, FeatureLine
+from src.feature import Feature, FeatureLine
 import shapely.geometry as geom
 
 

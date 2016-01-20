@@ -1,7 +1,7 @@
 import unittest
-from feature import Feature
 import shapely.geometry as geom
-from feature_tree import BlendNode, ReplaceNode, AdditionNode, FeatureTree
+from src.feature import Feature
+from src.feature_tree import BlendNode, ReplaceNode, AdditionNode, FeatureTree
 
 
 class FeatureTest(Feature):
