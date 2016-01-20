@@ -2,9 +2,9 @@ language: python
 python: "3.4"
 
 install:
-  - "pip install pep8"
-  - "pip install coveralls"
-  - "pip install shapely"
+  - "pip install pep8 --no-cache-dir"
+  - "pip install coveralls --no-cache-dir"
+  - "pip install shapely --no-cache-dir"
 
 before_script: "pep8 . --ignore=W293,E501"
 
