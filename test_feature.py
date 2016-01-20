@@ -11,12 +11,12 @@ class FeatureTest(Feature):
 class TestFeature(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestFeature, self).__init__(*args, **kwargs)
-        self.f1 = FeatureTest(0, 0, 1, 1)
+        self.f1 = FeatureTest(0, 0, 0.9, 0.9)
         self.f2 = FeatureTest(1, 1, 2, 2)
         self.f3 = FeatureTest(0, 0, 2, 2)
 
         self.l1 = FeatureLine([(0, 0), (2, 2)], 1)
-        self.l2 = FeatureLine([(0, 0), (-1, -1)], 1)
+        self.l2 = FeatureLine([(-0.1, -0.1), (-1, -1)], 1)
         self.l3 = FeatureLine([(0, 0), (0, -1)], 1)
 
     def test_intersect_ff(self):
