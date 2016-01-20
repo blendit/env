@@ -8,7 +8,9 @@ install:
 
 before_script: "pep8 . --ignore=W293,E501"
 
-script: coverage run --source=test_feature test_feature.py
+script:
+  - coverage run --source=test_feature test_feature.py
+  - coverage run --source=test_feature_tree test_feature_tree.py
 
 after_success:
   coveralls
