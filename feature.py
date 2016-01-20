@@ -46,7 +46,7 @@ class FeatureLine(Feature):
 
     def _update_shape(self):
         """Updates the shape to match the current path and thickness."""
-        self.shape = self.line.buffer(thickness, cap_style=geom.CAP_STYLE.flat, join_style=geom.JOIN_STYLE.round)
+        self.shape = self.line.buffer(self.thickness, cap_style=geom.CAP_STYLE.flat, join_style=geom.JOIN_STYLE.round)
 
     def interaction(self):
         """Give the interaction type of the feature with other features.
