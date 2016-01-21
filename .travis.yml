@@ -9,9 +9,7 @@ install:
 before_script: "pep8 . --ignore=W293,E501"
 
 script:
-  - coverage run -m tests.test_feature
-  - coverage run -m tests.test_feature_tree
-  - coverage run -m tests.test_landscape
+  - coverage run -m unittest discover
 
 after_success:
   coveralls
