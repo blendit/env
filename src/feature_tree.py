@@ -1,7 +1,7 @@
 import numpy
 from shapely.ops import cascaded_union
-from feature import Feature
-from exception import EnvironmentException
+from src.exception import EnvironmentException
+from src.feature import Feature
 
 
 class IntersectError(EnvironmentException):

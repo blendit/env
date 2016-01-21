@@ -2,7 +2,7 @@ import numpy
 from numpy import random
 import shapely.geometry as geom
 
-from feature import Feature, FeatureLine
+from src.feature import Feature, FeatureLine
 
 
 class Landscape(Feature):

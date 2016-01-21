@@ -1,4 +1,4 @@
-from feature import Feature, FeatureLine
+from src.feature import Feature, FeatureLine
 
 
 class WaterArea(Feature):

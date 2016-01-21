@@ -1,6 +1,6 @@
 import numpy
 import unittest
-from landscape import Mountain
+from src.landscape import Mountain
 import shapely.geometry as geom
 
 
@@ -20,7 +20,3 @@ class TestMountain(unittest.TestCase):
 
     def test_influence_weight(self):
         self.assertEqual(self.m1.influence_weight((0, 0)), 1)
-
-        
-if __name__ == '__main__':
-    unittest.main(verbosity=10)

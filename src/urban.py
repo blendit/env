@@ -1,4 +1,4 @@
-from feature import Feature
+from src.feature import Feature
 
 
 class Urban(Feature):
