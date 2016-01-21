@@ -108,7 +108,3 @@ class TestClasseFeatureTree(unittest.TestCase):
         self.assertEqual(tree2.z((0.5, 0.5)), (1 + 10) / 2)
         self.assertEqual(tree2.z((1.2, 1.2)), 10)
         self.assertEqual(tree2.z((0.78, 0.75)), 0.8 * 100 + 0.2 * ((1 + 10) / 2))
-
-
-if __name__ == '__main__':
-    unittest.main()

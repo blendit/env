@@ -45,7 +45,3 @@ class TestFeature(unittest.TestCase):
 
         self.assertTrue(self.l1.intersect(self.l3))
         self.assertTrue(self.l3.intersect(self.l1))
-
-
-if __name__ == '__main__':
-    unittest.main()
