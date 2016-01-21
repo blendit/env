@@ -1,2 +1,2 @@
 [run]
-source = tests
+source = tests,src
