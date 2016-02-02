@@ -1,7 +1,10 @@
+from PIL import Image
+import numpy
+
 class HeightMap:
     """Height map structure. This is just a 2D array containing z-values"""
 
-    def default_z(self, pos):
+    def default_z(pos):
         """Default initialization of the map: every point at z = 0"""
         return 0
     
@@ -13,3 +16,7 @@ class HeightMap:
 
     def __getitem__(self, index):
         return self.hmap[index]
+
+    def export(self, path):
+        im = Image.fromarray(numpy.uint8(self.hmap), "L") # "L" specifies 8-bit grayscale integer
+        im.save(path)
