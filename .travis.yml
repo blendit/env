@@ -5,7 +5,7 @@ install:
   - "pip install pep8 --no-cache-dir"
   - "pip install coveralls --no-cache-dir"
   - "pip install shapely --no-cache-dir"
-  - "pip install PIL --no-cache-dir"
+  - "pip install pillow --no-cache-dir"
 
 before_script: "pep8 . --ignore=W293,E501"
 
