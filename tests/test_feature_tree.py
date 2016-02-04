@@ -95,35 +95,37 @@ class TestClassesNodes(unittest.TestCase):
         self.assertEqual(node1.shape.area, 3.0)
 
 
-class TestClasseFeatureTree(unittest.TestCase):
+class TestClassFeatureTree(unittest.TestCase):
+    def setUp(self):
+        self.f1 = FeatureTest(1, influence="notall")
+        self.f2 = FeatureTest(10, influence="notall")
+        self.f3 = FeatureTestReplace(100, influence="notall")
+        self.f4 = FeatureTestAddition(1000, influence="notall")
+
+        self.f1.shape = geom.box(0.0, 0.0, 1.0, 1.0)
+        self.f2.shape = geom.box(0.5, 0.5, 1.5, 1.5)
+        self.f3.shape = geom.box(0.75, 0, 0.8, 2)
+        self.f4.shape = geom.box(0.75, 0, 0.8, 2)
+
     def test_tree(self):
-        f1 = FeatureTest(1)
-        f2 = FeatureTest(10)
-        f3 = FeatureTestReplace(100)
-        f4 = FeatureTestAddition(1000)
-        
-        f1.shape = geom.box(0.0, 0.0, 1.0, 1.0)
-        f2.shape = geom.box(0.5, 0.5, 1.5, 1.5)
-        f3.shape = geom.box(0.75, 0, 0.8, 2)
-        f4.shape = geom.box(0, 0.75, 2, 0.7)
-        
-        tree = FeatureTree([f1, f2])
-        
+        self.f1.influ = "all"
+        self.f2.influ = "all"
+        tree = FeatureTree([self.f1, self.f2])
+
         self.assertEqual(tree.z((0, 0)), 1 / 2)
         self.assertEqual(tree.z((0.75, 0.75)), (1 + 10) / 2)
         self.assertEqual(tree.z((1.2, 1.2)), 10 / 2)
 
-        f1.influ = "notall"
-        f2.influ = "notall"
-        f3.influ = "notall"
-        f4.influ = "notall"
-        tree2 = FeatureTree([f1, f2, f3])
-        tree3 = FeatureTree([f1, f2, f4])
-        
+    def test_replace_tree(self):
+        tree2 = FeatureTree([self.f1, self.f2, self.f3])
+
         self.assertEqual(tree2.z((0, 0)), 1)
         self.assertEqual(tree2.z((0.5, 0.5)), (1 + 10) / 2)
         self.assertEqual(tree2.z((1.2, 1.2)), 10)
         self.assertEqual(tree2.z((0.78, 0.75)), 0.8 * 100 + 0.2 * ((1 + 10) / 2))
+
+    def test_addition_tree(self):
+        tree3 = FeatureTree([self.f1, self.f2, self.f4])
 
         self.assertEqual(tree3.z((0, 0)), 1)
         self.assertEqual(tree3.z((0.5, 0.5)), (1 + 10) / 2)
