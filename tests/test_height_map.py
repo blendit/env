@@ -13,6 +13,7 @@ class TestHeightMap(unittest.TestCase):
     def test_hmap(self):
         self.assertEqual(self.m1.hmap[0][0], 0)
         self.assertEqual(self.m2.hmap[0][0], 1)
+        self.assertEqual(self.m2.hmap[1][2], 4)
 
     def test_export(self):
         self.assertRaises(None, self.m1.export("m1.png"))
