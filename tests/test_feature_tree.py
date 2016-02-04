@@ -82,6 +82,12 @@ class TestClassesNodes(unittest.TestCase):
         self.assertEqual(node1.influence((1, 1)), 0.8)
         self.assertEqual(node1.shape.area, 2.0)
 
+        node1.add_child(self.n3)
+        self.assertEqual(self.n3.z((1, 1)), 100)
+        self.assertAlmostEqual(node1.z((1, 1)), 10 * 0.8 + (1 + 100) / 2)
+        self.assertEqual(node1.influence((1, 1)), 0.8 * 2)
+        self.assertEqual(node1.shape.area, 3.0)
+
 
 class TestClasseFeatureTree(unittest.TestCase):
     def test_tree(self):
