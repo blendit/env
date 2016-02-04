@@ -34,7 +34,13 @@ class FeatureTestReplace(FeatureTest):
     def interaction(self):
         return "replace"
 
-        
+
+class FeatureTestAddition(FeatureTest):
+    """"The same 1-1 test square, but with additive interaction."""
+    def interaction(self):
+        return "addition"
+
+
 class TestClassesNodes(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestClassesNodes, self).__init__(*args, **kwargs)
@@ -94,10 +100,12 @@ class TestClasseFeatureTree(unittest.TestCase):
         f1 = FeatureTest(1)
         f2 = FeatureTest(10)
         f3 = FeatureTestReplace(100)
+        f4 = FeatureTestAddition(1000)
         
         f1.shape = geom.box(0.0, 0.0, 1.0, 1.0)
         f2.shape = geom.box(0.5, 0.5, 1.5, 1.5)
         f3.shape = geom.box(0.75, 0, 0.8, 2)
+        f4.shape = geom.box(0, 0.75, 2, 0.7)
         
         tree = FeatureTree([f1, f2])
         
@@ -108,9 +116,16 @@ class TestClasseFeatureTree(unittest.TestCase):
         f1.influ = "notall"
         f2.influ = "notall"
         f3.influ = "notall"
+        f4.influ = "notall"
         tree2 = FeatureTree([f1, f2, f3])
+        tree3 = FeatureTree([f1, f2, f4])
         
         self.assertEqual(tree2.z((0, 0)), 1)
         self.assertEqual(tree2.z((0.5, 0.5)), (1 + 10) / 2)
         self.assertEqual(tree2.z((1.2, 1.2)), 10)
         self.assertEqual(tree2.z((0.78, 0.75)), 0.8 * 100 + 0.2 * ((1 + 10) / 2))
+
+        self.assertEqual(tree3.z((0, 0)), 1)
+        self.assertEqual(tree3.z((0.5, 0.5)), (1 + 10) / 2)
+        self.assertEqual(tree3.z((1.2, 1.2)), 10)
+        self.assertAlmostEqual(tree3.z((0.78, 0.75)), 0.8 * 1000 + ((1 + 10) / 2))
