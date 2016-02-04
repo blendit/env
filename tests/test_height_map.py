@@ -17,6 +17,3 @@ class TestHeightMap(unittest.TestCase):
     def test_export(self):
         self.assertRaises(None, self.m1.export("m1.png"))
         self.assertRaises(None, self.m2.export("m2.png"))
-
-    def test_getitem(self):
-        #TODO
