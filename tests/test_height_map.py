@@ -22,6 +22,15 @@ class TestHeightMap(unittest.TestCase):
         self.assertRaises(None, self.m1.export("m1.png"))
         self.assertRaises(None, self.m2.export("m2.png"))
 
+    def test_check_images(self):
+        original1 = Image.open("tests/img/m1.png")
+        original2 = Image.open("tests/img/m2.png")
+        gen1 = Image.open("m1.png")
+        gen2 = Image.open("m2.png")
+        
+        self.assertEqual(original1, gen1)
+        self.assertEqual(original2, gen2)
+
 class TestHeightMapTree(unittest.TestCase):
     def test_tree_hmap(self):
         f1 = FeatureTest(100, influence="notall")
