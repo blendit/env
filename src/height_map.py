@@ -9,11 +9,17 @@ class HeightMap:
         """Default initialization of the map: every point at z = 0"""
         return 0
     
-    def __init__(self, sx, sy, z_func=__default_z):
+    def __init__(self, sx, sy, z_func=__default_z, max_val=255):
         """We can pass another function to z_func to initialize directly to z_func((x,y))"""
         self.size_x = sx
         self.size_y = sy
         self.hmap = [[z_func((x, y)) for x in range(sx)] for y in range(sy)]
+
+        # Resize too large points (threshold)
+        for x in range(sx):
+            for y in range(sy):
+                if self.hmap[y][x] > max_val:
+                    self.hmap[y][x] = max_val
 
     def __getitem__(self, index):
         return self.hmap[index]
