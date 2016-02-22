@@ -21,24 +21,28 @@ class FeatureTree:
         '''Initialize the tree from the list of features'''
         # Initialize features as nodes
         # Feature which merge as 'blend' do not need any special node
+        # First pass over "blend" objects, that will be backgrounds
         for feat in self.features[:]:
             if feat.interaction() == "blend":
                 node = BlendNode([feat])
                 self.features.remove(feat)
                 self.features.append(node)
-            else:
-                background = self.intersecting(feat, self.features)
-                node = None
-                
-                if feat.interaction() == "replace":
-                    node = ReplaceNode(background, feat)
-                elif feat.interaction() == "addition":
-                    node = AdditionNode(background, feat)
-                
-                self.features.remove(background)
-                if(feat != background):
-                    self.features.remove(feat)
-                self.features.append(node)
+
+        # Second pass for others (Replace and Addition)
+        for feat in self.features[:]:
+                if feat.interaction() != "blend":
+                    background = self.intersecting(feat, self.features)
+                    node = None
+                    
+                    if feat.interaction() == "replace":
+                        node = ReplaceNode(background, feat)
+                    elif feat.interaction() == "addition":
+                        node = AdditionNode(background, feat)
+                        
+                    self.features.remove(background)
+                    if(feat != background):
+                        self.features.remove(feat)
+                    self.features.append(node)
 
         # Construct the tree
         trees = []
@@ -173,7 +177,11 @@ class AdditionNode(Node):
             return self.background.z(pos) + alpha * self.foreground.z(pos)
 
     def influence(self, pos):
-        return self.background.influence(pos)
+        bg = self.background.influence(pos)
+        if bg != 0:
+            return bg
+        else:
+            return self.foreground.influence(pos)
 
     def add_child(self, node):
         self.background.add_child(node)
