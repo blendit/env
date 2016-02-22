@@ -2,8 +2,9 @@ import numpy
 import unittest
 from src.height_map import HeightMap
 import shapely.geometry as geom
+from PIL import Image
 
-from tests.test_feature_tree import FeatureTest, FeatureTestReplace
+from tests.test_feature_tree import FeatureTest, FeatureTestReplace, FeatureTestAddition
 from src.feature_tree import *
 
 class TestHeightMap(unittest.TestCase):
@@ -23,15 +24,23 @@ class TestHeightMap(unittest.TestCase):
 
 class TestHeightMapTree(unittest.TestCase):
     def test_tree_hmap(self):
-        f1 = FeatureTest(10, influence="notall")
-        f2 = FeatureTest(100, influence="notall")
+        f1 = FeatureTest(100, influence="notall")
+        f2 = FeatureTest(200, influence="notall")
+        f3 = FeatureTestReplace(100, influence="notall", val_influence=1)
+        f4 = FeatureTestAddition(100, influence="notall")
 
-        f1.shape = geom.box(0, 0, 20, 20)
-        f2.shape = geom.box(50, 50, 60, 60)
+        f1.shape = geom.box(0, 0, 50, 50)
+        f2.shape = geom.box(30, 30, 80, 80)
+        f3.shape = geom.box(0, 60, 50, 100)
+        f4.shape = geom.box(60, 60, 100, 100)
 
-        tree = FeatureTree([f1, f2])
+        tree = FeatureTree([f1, f2, f3, f4])
         
         heightmap = HeightMap(100, 100, tree.z)
 
         self.assertRaises(None, heightmap.export("mtree.png"))
-        
+
+        # Loads image and compare it to the data stored
+        original = Image.open("tests/img/mtree.png")
+        gen = Image.open("mtree.png")
+        self.assertEqual(original, gen)
