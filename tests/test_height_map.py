@@ -23,7 +23,6 @@ class TestHeightMap(unittest.TestCase):
         self.assertRaises(None, self.m1.export("m1.png"))
         self.assertRaises(None, self.m2.export("m2.png"))
 
-    def test_check_images(self):
         original1 = Image.open("tests/img/m1.png")
         original2 = Image.open("tests/img/m2.png")
         gen1 = Image.open("m1.png")
