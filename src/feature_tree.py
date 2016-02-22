@@ -142,7 +142,11 @@ class ReplaceNode(Node):
             return (1 - alpha) * self.background.z(pos) + alpha * self.foreground.z(pos)
 
     def influence(self, pos):
-        return self.background.influence(pos)
+        bg = self.background.influence(pos)
+        if bg != 0:
+            return bg
+        else:
+            return self.foreground.influence(pos)
 
     def add_child(self, node):
         self.background.add_child(node)
