@@ -7,6 +7,7 @@ from PIL import Image
 from tests.test_feature_tree import FeatureTest, FeatureTestReplace, FeatureTestAddition
 from src.feature_tree import *
 
+
 class TestHeightMap(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestHeightMap, self).__init__(*args, **kwargs)
@@ -30,6 +31,7 @@ class TestHeightMap(unittest.TestCase):
         
         self.assertEqual(original1, gen1)
         self.assertEqual(original2, gen2)
+
 
 class TestHeightMapTree(unittest.TestCase):
     def test_tree_hmap(self):
