@@ -34,8 +34,8 @@ class TestRoads(unittest.TestCase):
         super(TestRoads, self).__init__(*args, **kwargs)
 
         self.background = FeatureTest(100, "notall", 1)
-        self.r1 = Road([(40,40), (70,50)], 10, 100)
-        self.r2 = Road([(20,20), (60,60), (20, 70)], 10, 100)
+        self.r1 = Road([(40, 40), (70, 50)], 10, 100)
+        self.r2 = Road([(20, 20), (60, 60), (20, 70)], 10, 100)
 
     def test_basic_road(self):
         hm1 = HeightMap(100, 100, self.r2.z)
@@ -48,4 +48,3 @@ class TestRoads(unittest.TestCase):
     def test_two_roads(self):
         tree = FeatureTree([self.background, self.r1, self.r2])
         hm2 = HeightMap(80, 80, tree.z)
-        
