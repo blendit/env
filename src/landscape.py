@@ -47,8 +47,15 @@ class Mountain(Landscape):
         return 1
 
 
-class Roads(FeatureLine):
-    """Roads class"""
+class Road(FeatureLine):
+    """A sigle road"""
+
+    def __init__(self):
+        pass
+
+
+class RoadNetwork(Feature):
+    """A network of roads"""
 
     def __init__(self):
         pass
