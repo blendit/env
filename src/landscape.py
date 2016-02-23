@@ -48,18 +48,37 @@ class Mountain(Landscape):
 
 
 class Road(FeatureLine):
-    """A sigle road"""
+    """A single road"""
 
-    def __init__(self):
-        pass
+    def __init__(self, points, thickness, height=0):
+        """- *points* is the set of oints of the road
+        - *thickness* is the width of the road
+        - *height* (default **0**) is the constant height of the road"""
+        super(Road, self).__init__(points, thickness)
+        
+        self.height = height
+
+    def z(self, coord):
+        coord = geom.Point(coord)
+        if self.shape.touches(coord) or self.shape.contains(coord):
+            return self.height
+        else:
+            return 0
+
+    def influence(coord):
+        coord = geom.Point(coord)
+        if self.shape.touches(coord) or self.shape.contains(coord):
+            return 1
+        else:
+            return 0
 
 
 class RoadNetwork(Feature):
     """A network of roads"""
 
     def __init__(self):
-        pass
-
+        super(RoadNetwork, self).__init__()
+        
 
 class Vegetation(Feature):
     """Vegatation class"""
