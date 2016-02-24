@@ -67,7 +67,7 @@ class FeatureTree:
         for n in node_list:
             if n == node:
                 continue
-            if node.intersect(n):
+            if isinstance(n, Node) and node.intersect(n):
                 return n
                 
         return node
