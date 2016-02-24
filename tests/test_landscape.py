@@ -33,8 +33,9 @@ class TestRoads(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestRoads, self).__init__(*args, **kwargs)
 
-        self.background = FeatureTest(100, "notall", 1)
-        self.r1 = Road([(40, 40), (70, 50)], 10, 100)
+        self.background = FeatureTest(200, "notall", 1)
+        self.background.shape = geom.box(10, 10, 90, 90)
+        self.r1 = Road([(15, 40), (70, 30)], 3, 100)
         self.r2 = Road([(20, 20), (60, 60), (20, 70)], 10, 100)
 
     def test_basic_road(self):
@@ -48,3 +49,4 @@ class TestRoads(unittest.TestCase):
     def test_two_roads(self):
         tree = FeatureTree([self.background, self.r1, self.r2])
         hm2 = HeightMap(80, 80, tree.z)
+        hm2.export("mroad2.png")

@@ -65,7 +65,7 @@ class Road(FeatureLine):
         else:
             return 0
 
-    def influence(coord):
+    def influence(self, coord):
         coord = geom.Point(coord)
         if self.shape.touches(coord) or self.shape.contains(coord):
             return 1
