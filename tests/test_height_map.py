@@ -1,6 +1,9 @@
 import numpy
-import unittest, warnings
+import unittest
+import warnings
+
 from src.height_map import HeightMap
+
 import shapely.geometry as geom
 from PIL import Image
 

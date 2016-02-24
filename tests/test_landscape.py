@@ -1,5 +1,6 @@
 import numpy
-import unittest, warnings
+import unittest
+import warnings
 
 from src.landscape import Mountain, Road, RoadNetwork
 from src.height_map import HeightMap
