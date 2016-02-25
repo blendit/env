@@ -6,10 +6,11 @@ from src.feature import Feature
 
 class FeatureTest(Feature):
     """A 1-1 square feature for tests."""
-    def __init__(self, z_const=2, influence="all"):
+    def __init__(self, z_const=2, influence="all", val_influence=0.8):
         self.z_const = z_const
         self.shape = geom.box(0.0, 0.0, 1.0, 1.0)
         self.influ = influence
+        self.val_influ = val_influence
 
     def z(self, coord):
         coord = geom.Point(coord)
@@ -21,10 +22,10 @@ class FeatureTest(Feature):
     def influence(self, coord):
         coord = geom.Point(coord)
         if self.influ == "all":
-            return 0.8
+            return self.val_influ
         else:
             if self.shape.touches(coord) or self.shape.contains(coord):
-                return 0.8
+                return self.val_influ
             else:
                 return 0
 
