@@ -7,7 +7,7 @@ from src.height_map import HeightMap
 import shapely.geometry as geom
 from PIL import Image
 
-from tests.test_feature_tree import FeatureTest, FeatureTestReplace, FeatureTestAddition
+from tests.base import FeatureTest, FeatureTestReplace, FeatureTestAddition
 from src.feature_tree import *
 
 

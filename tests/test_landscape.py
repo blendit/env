@@ -9,7 +9,7 @@ from src.feature_tree import FeatureTree
 import shapely.geometry as geom
 from PIL import Image
 
-from tests.test_feature_tree import FeatureTest
+from tests.base import FeatureTest
 
 
 class TestMountain(unittest.TestCase):
