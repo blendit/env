@@ -3,6 +3,7 @@ import os
 from PIL import Image
 from src.environment import Environment
 
+
 class BlendEnvironment(Environment):
     """Link between environment and blender"""
 
@@ -19,7 +20,7 @@ class BlendEnvironment(Environment):
         
         bpy.ops.object.delete(use_global=False)
         # maybe we need to activate import_image.to_plane within blender...
-        bpy.ops.import_image.to_plane(files=[{"name":image_name}], directory=image_dir, filter_image=True, filter_movie=True, filter_glob="", relative=False)
+        bpy.ops.import_image.to_plane(files=[{"name": image_name}], directory=image_dir, filter_image=True, filter_movie=True, filter_glob="", relative=False)
         bpy.ops.transform.resize(value=(14, 14, 14), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
         bpy.ops.object.editmode_toggle()
         bpy.ops.mesh.subdivide(number_cuts=maxi, smoothness=0)
@@ -31,7 +32,6 @@ class BlendEnvironment(Environment):
         bpy.ops.object.modifier_add(type='SUBSURF')
         bpy.data.lamps['Lamp'].type = 'SUN'
         bpy.context.scene.render.engine = 'CYCLES'
-
 
     def render(self, final_result):
         bpy.context.scene.render.filepath = final_result
