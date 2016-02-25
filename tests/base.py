@@ -2,6 +2,9 @@ import shapely.geometry as geom
 from src.feature_tree import BlendNode, ReplaceNode, AdditionNode, FeatureTree
 from src.feature import Feature
 
+from PIL import Image
+import warnings
+
 
 class FeatureTest(Feature):
     """A 1-1 square feature for tests."""
@@ -39,3 +42,15 @@ class FeatureTestAddition(FeatureTest):
     """"The same 1-1 test square, but with additive interaction."""
     def interaction(self):
         return "addition"
+
+
+def compare_imgs(i1, i2, test_case):
+    """Compare two images saved on the disk.
+    * *i1*, *i2* are the paths of the two images.
+    * *test_case* is a unittest.TestCase object, where the comparison have to be done."""
+    # Ignore non-closed files
+    warnings.simplefilter("ignore", ResourceWarning)
+    
+    original = Image.open(i1)
+    gen = Image.open(i2)
+    test_case.assertEqual(original, gen)

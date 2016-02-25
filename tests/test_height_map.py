@@ -1,14 +1,11 @@
 import numpy
 import unittest
-import warnings
+from tests.base import FeatureTest, FeatureTestReplace, FeatureTestAddition, compare_imgs
 
 from src.height_map import HeightMap
+from src.feature_tree import *
 
 import shapely.geometry as geom
-from PIL import Image
-
-from tests.base import FeatureTest, FeatureTestReplace, FeatureTestAddition
-from src.feature_tree import *
 
 
 class TestHeightMap(unittest.TestCase):
@@ -23,26 +20,15 @@ class TestHeightMap(unittest.TestCase):
         self.assertEqual(self.m2.hmap[1][2], 4)
 
     def test_export(self):
-        # Ignore non-closed files
-        warnings.simplefilter("ignore", ResourceWarning)
-        
         self.assertRaises(None, self.m1.export("m1.png"))
         self.assertRaises(None, self.m2.export("m2.png"))
 
-        original1 = Image.open("tests/img/m1.png")
-        original2 = Image.open("tests/img/m2.png")
-        gen1 = Image.open("m1.png")
-        gen2 = Image.open("m2.png")
-        
-        self.assertEqual(original1, gen1)
-        self.assertEqual(original2, gen2)
+        compare_imgs("tests/img/m1.png", "m1.png", self)
+        compare_imgs("tests/img/m2.png", "m2.png", self)
 
 
 class TestHeightMapTree(unittest.TestCase):
     def test_tree_hmap(self):
-        # Ignore non-closed files
-        warnings.simplefilter("ignore", ResourceWarning)
-        
         f1 = FeatureTest(100, influence="notall")
         f2 = FeatureTest(200, influence="notall")
         f3 = FeatureTestReplace(100, influence="notall", val_influence=1)
@@ -58,8 +44,4 @@ class TestHeightMapTree(unittest.TestCase):
         heightmap = HeightMap(100, 100, tree.z)
 
         self.assertRaises(None, heightmap.export("mtree.png"))
-
-        # Loads image and compare it to the data stored
-        original = Image.open("tests/img/mtree.png")
-        gen = Image.open("mtree.png")
-        self.assertEqual(original, gen)
+        compare_imgs("tests/img/mtree.png", "mtree.png", self)
