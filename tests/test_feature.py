@@ -1,4 +1,4 @@
-import unittest
+1import unittest
 from src.feature import Feature, FeatureLine
 import shapely.geometry as geom
 
@@ -45,3 +45,9 @@ class TestFeature(unittest.TestCase):
 
         self.assertTrue(self.l1.intersect(self.l3))
         self.assertTrue(self.l3.intersect(self.l1))
+
+    def test_z(self):
+        self.f1.z((0, 0))
+
+    def test_influence(self):
+        self.f1.influence((0, 0))
