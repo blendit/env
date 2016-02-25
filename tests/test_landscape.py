@@ -1,5 +1,6 @@
 import numpy
 import unittest
+import warnings
 
 from src.landscape import Mountain, Road, RoadNetwork
 from src.height_map import HeightMap
@@ -39,11 +40,15 @@ class TestRoads(unittest.TestCase):
         self.r2 = Road([(20, 20), (60, 60), (20, 70)], 10, 100)
 
     def test_basic_road(self):
+        # Ignore non-closed files
+        warnings.simplefilter("ignore", ResourceWarning)
+        
         hm1 = HeightMap(100, 100, self.r2.z)
         hm1.export("mroad1.png")
 
         original = Image.open("tests/img/mroad1.png")
         gen = Image.open("mroad1.png")
+        
         self.assertEqual(original, gen)
 
     def test_two_roads(self):

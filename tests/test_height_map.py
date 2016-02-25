@@ -1,6 +1,9 @@
 import numpy
 import unittest
+import warnings
+
 from src.height_map import HeightMap
+
 import shapely.geometry as geom
 from PIL import Image
 
@@ -20,6 +23,9 @@ class TestHeightMap(unittest.TestCase):
         self.assertEqual(self.m2.hmap[1][2], 4)
 
     def test_export(self):
+        # Ignore non-closed files
+        warnings.simplefilter("ignore", ResourceWarning)
+        
         self.assertRaises(None, self.m1.export("m1.png"))
         self.assertRaises(None, self.m2.export("m2.png"))
 
@@ -34,6 +40,9 @@ class TestHeightMap(unittest.TestCase):
 
 class TestHeightMapTree(unittest.TestCase):
     def test_tree_hmap(self):
+        # Ignore non-closed files
+        warnings.simplefilter("ignore", ResourceWarning)
+        
         f1 = FeatureTest(100, influence="notall")
         f2 = FeatureTest(200, influence="notall")
         f3 = FeatureTestReplace(100, influence="notall", val_influence=1)
