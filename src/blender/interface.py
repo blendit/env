@@ -45,6 +45,7 @@ def register():
     kmi.properties.total = 4
     addon_keymaps.append((km, kmi))
 
+
 def unregister():
     bpy.utils.unregister_class(EnvInterface)
     bpy.types.VIEW3D_MT_object.remove(menu_func)
