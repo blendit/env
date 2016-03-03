@@ -1,9 +1,23 @@
+# Shortcut : blender -P interface.py
+# /home/raphael/ensl/2a/pi/blender-2.76b-linux-glibc211-x86_64/2.76/scripts/startup/bl_ui/properties_render.py
+# addons/cycles/properties.py
+
 bl_info = {
     "name": "Environment plug-in",
     "category": "Object",
 }
 
 import bpy
+
+class Run_button(bpy.types.Panel):
+    bl_label = "Environment panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("object.pingpong", text="Ping")
 
 
 class EnvInterface(bpy.types.Operator):
@@ -13,6 +27,7 @@ class EnvInterface(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     total = bpy.props.IntProperty(name="Resolution", default=1, min=1, max=100)
+    test = bpy.props.BoolProperty(name="Run")
     path = bpy.props.StringProperty(
         name="",
         description="Path to Directory",
