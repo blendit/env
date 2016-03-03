@@ -24,7 +24,15 @@ class HeightMap:
     def __getitem__(self, index):
         return self.hmap[index]
 
-    def export(self, path):
+    def change_res(self, res):
+        new_h = [[self.hmap[y // res][x // res] for x in range(res * self.size_x)] for y in range(res * self.size_y)]
+        self.size_x *= res
+        self.size_y *= res
+        self.hmap = new_h
+
+    def export(self, path, res = 1):
+        if(res > 1):
+            self.change_res(res)
         im = Image.fromarray(numpy.uint8(self.hmap), "L")
         # "L" specifies 8-bit grayscale integer
         im.save(path)
