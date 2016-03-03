@@ -30,7 +30,7 @@ class TestHeightMap(unittest.TestCase):
 
     def test_change_res(self):
         res = 2
-        self.m = HeightMap(10, 10, lambda z: z[0]+10*z[1])
+        self.m = HeightMap(10, 10, lambda z: z[0] + 10 * z[1])
         self.assertEqual(self.m.hmap[9][9], 99)
         self.m.change_res(2)
         self.assertEqual(self.m.hmap[19][19], 99)

@@ -30,7 +30,7 @@ class HeightMap:
         self.size_y *= res
         self.hmap = new_h
 
-    def export(self, path, res = 1):
+    def export(self, path, res=1):
         if(res > 1):
             self.change_res(res)
         im = Image.fromarray(numpy.uint8(self.hmap), "L")
