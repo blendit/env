@@ -22,9 +22,21 @@ class TestHeightMap(unittest.TestCase):
     def test_export(self):
         self.assertRaises(None, self.m1.export("m1.png"))
         self.assertRaises(None, self.m2.export("m2.png"))
+        self.assertRaises(None, self.m2.export("m3.png", 2))
 
         compare_imgs("tests/img/m1.png", "m1.png", self)
         compare_imgs("tests/img/m2.png", "m2.png", self)
+        compare_imgs("tests/img/m3.png", "m3.png", self)
+
+    def test_change_res(self):
+        res = 2
+        self.m = HeightMap(10, 10, lambda z: z[0] + 10 * z[1])
+        self.assertEqual(self.m.hmap[9][9], 99)
+        self.m.change_res(2)
+        self.assertEqual(self.m.hmap[19][19], 99)
+        self.assertEqual(self.m.hmap[19][18], 99)
+        self.assertEqual(self.m.hmap[18][19], 99)
+        self.assertEqual(self.m.hmap[18][18], 99)
 
 
 class TestHeightMapTree(unittest.TestCase):
