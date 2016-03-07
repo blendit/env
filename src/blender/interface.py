@@ -1,13 +1,19 @@
 # Shortcut : blender -P interface.py
-# /home/raphael/ensl/2a/pi/blender-2.76b-linux-glibc211-x86_64/2.76/scripts/startup/bl_ui/properties_render.py
-# addons/cycles/properties.py
-
 bl_info = {
     "name": "Environment plug-in",
     "category": "Object",
 }
 
 import bpy
+import os
+import sys
+
+script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(script_dir)
+print(script_dir)
+
+from src.blend_environment import BlendEnvironment
+
 
 def initSceneProperties(scn):
     bpy.types.Scene.res = bpy.props.IntProperty(name="Resolution", default=1, min=1, max=100)
@@ -28,7 +34,6 @@ class Run_button(bpy.types.Panel):
     bl_label = "Environment panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
-
     
     def draw(self, context):
         layout = self.layout
@@ -47,6 +52,8 @@ class EnvInterface(bpy.types.Operator):
     def execute(self, context):
         scn = bpy.context.scene
         self.report({'INFO'}, "env.interface :\n  Resolution : %d\n  Path : %s" % (scn["res"], scn["path"]))
+        a = BlendEnvironment()
+        a.create_terrain(scn["path"])
         return {'FINISHED'}
 
 
@@ -58,7 +65,7 @@ class EnvInterface(bpy.types.Operator):
 
 
 def register():
-     bpy.utils.register_module(__name__)
+    bpy.utils.register_module(__name__)
 #     bpy.types.VIEW3D_MT_object.append(menu_func)
 
 #     # handle the keymap
@@ -70,7 +77,7 @@ def register():
 
 
 def unregister():
-     bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_module(__name__)
 #     bpy.types.VIEW3D_MT_object.remove(menu_func)
 
 #     # handle the keymap
