@@ -16,7 +16,7 @@ from src.blend_environment import BlendEnvironment
 
 
 def initSceneProperties(scn):
-    bpy.types.Scene.res = bpy.props.IntProperty(name="Resolution", default=1, min=1, max=100)
+    bpy.types.Scene.res = bpy.props.IntProperty(name="Resolution", default=1, min=1, max=10)
     scn["res"] = 1
     bpy.types.Scene.path = bpy.props.StringProperty(
         name="",
@@ -24,13 +24,13 @@ def initSceneProperties(scn):
         default="",
         maxlen=1024,
         subtype='FILE_PATH')
-    scn["path"] = ""
+    scn["path"] = script_dir + "/mt-ruapehu-and-mt-ngauruhoe.png"
     return
 
 initSceneProperties(bpy.context.scene)
 
 
-class Run_button(bpy.types.Panel):
+class EnvPanel(bpy.types.Panel):
     bl_label = "Environment panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
@@ -53,7 +53,8 @@ class EnvInterface(bpy.types.Operator):
         scn = bpy.context.scene
         self.report({'INFO'}, "env.interface :\n  Resolution : %d\n  Path : %s" % (scn["res"], scn["path"]))
         a = BlendEnvironment()
-        a.create_terrain(scn["path"])
+        a.create_terrain(scn["path"], scn["res"])
+        self.report({'INFO'}, "finished import")
         return {'FINISHED'}
 
 

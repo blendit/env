@@ -10,7 +10,7 @@ class BlendEnvironment(Environment):
     def __init__(self):
         pass
 
-    def create_terrain(self, image_path):
+    def create_terrain(self, image_path, res):
         image_dir, image_name = os.path.split(image_path)
         image = os.path.splitext(image_name)[0]
         
@@ -24,6 +24,8 @@ class BlendEnvironment(Environment):
         bpy.ops.transform.resize(value=(14, 14, 14), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
         bpy.ops.object.editmode_toggle()
         bpy.ops.mesh.subdivide(number_cuts=maxi, smoothness=0)
+        for x in range(res-1):
+            bpy.ops.mesh.subdivide(smoothness=0)
         bpy.ops.object.editmode_toggle()
         bpy.ops.object.modifier_add(type='DISPLACE')
         bpy.context.object.modifiers["Displace"].texture = bpy.data.textures[image]
