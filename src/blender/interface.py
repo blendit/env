@@ -10,7 +10,6 @@ import sys
 
 script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(script_dir)
-print(script_dir)
 
 from src.blend_environment import BlendEnvironment
 
