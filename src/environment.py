@@ -8,6 +8,8 @@ class Environment:
 
     def __init__(self, features):
         self.tree = FeatureTree(features)
+        self.models = self.tree.models
+        
         self.heightmap_init = False
 
     def init_heightmap(res_x, res_y):

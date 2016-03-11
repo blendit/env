@@ -13,6 +13,8 @@ class Feature():
 
         self.shape = geom.Polygon()
 
+        self.models = []
+
     def intersect(self, feature2):
         """Returns *true* if the feature intersects *feature2*.
         NB: this should be symmetric."""
@@ -43,6 +45,8 @@ class FeatureLine(Feature):
         self.line = geom.LineString(points)
         self.thickness = thickness
         self._update_shape()
+
+        self.models = []
 
     def _update_shape(self):
         """Updates the shape to match the current path and thickness."""

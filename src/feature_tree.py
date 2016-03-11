@@ -15,6 +15,7 @@ class FeatureTree:
     def __init__(self, features):
         self.features = list(features)
         self.tree = None
+        self.models=[]
         self.init_tree()
 
     def init_tree(self):
@@ -97,6 +98,8 @@ class Node(Feature):
         self.children = []
         for child in children:
             self.add_child(child)
+
+        self.models = []
 
     def add_child(self, child):
         self.children.append(child)
