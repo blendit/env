@@ -33,7 +33,7 @@ class BlendEnvironment(Environment):
         bpy.context.object.modifiers["Displace"].texture_coords = 'UV'
         bpy.ops.object.modifier_add(type='SUBSURF')
         bpy.data.lamps['Lamp'].type = 'SUN'
-        bpy.context.scene.render.engine = 'CYCLES'
+#        bpy.context.scene.render.engine = 'CYCLES'
 
     def render(self, final_result):
         bpy.context.scene.render.filepath = final_result
