@@ -1,5 +1,5 @@
-from feature_tree import FeatureTree
-from height_map import HeightMap
+from src.feature_tree import FeatureTree
+from src.height_map import HeightMap
 
 
 class Environment:
