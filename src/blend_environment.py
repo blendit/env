@@ -1,5 +1,7 @@
 import bpy
 import os
+import pickle
+import time
 from PIL import Image
 from src.environment import Environment
 
@@ -35,6 +37,15 @@ class BlendEnvironment(Environment):
         bpy.data.lamps['Lamp'].type = 'SUN'
 #        bpy.context.scene.render.engine = 'CYCLES'
 
+    def import_env(self, pickle_path, res):
+        f = open(pickle_path, 'wb')
+        env = pickle.load(f)
+        f.close()
+
+        image = "/tmp/env" + str(int(time.time)) + ".png"
+        env.export_heightmap(image)
+        self.create_terrain(image, res)
+        
     def render(self, final_result):
         bpy.context.scene.render.filepath = final_result
         bpy.context.scene.render.resolution_x = 1920

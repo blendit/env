@@ -18,12 +18,20 @@ def initSceneProperties(scn):
     bpy.types.Scene.res = bpy.props.IntProperty(name="Resolution", default=1, min=1, max=10)
     scn["res"] = 1
     bpy.types.Scene.path = bpy.props.StringProperty(
-        name="",
+        name="Heightmap",
         description="Path to Directory",
         default="",
         maxlen=1024,
         subtype='FILE_PATH')
     scn["path"] = script_dir + "/mt-ruapehu-and-mt-ngauruhoe.png"
+    bpy.types.Scene.pickle_path = bpy.props.StringProperty(
+        name="Environment file",
+        description="Path to Directory",
+        default="",
+        maxlen=1024,
+        subtype='FILE_PATH')
+    scn["pickle_path"] = script_dir + "/test.p"
+
     return
 
 initSceneProperties(bpy.context.scene)
@@ -40,19 +48,36 @@ class EnvPanel(bpy.types.Panel):
         layout.prop(scn, 'res')
         layout.prop(scn, 'path')
         layout.operator("env.interface")
+        layout.prop(scn, 'pickle_path')
+        layout.operator("env.pickle_interface")
 
 
 class EnvInterface(bpy.types.Operator):
     """Environment plug-in"""
     bl_idname = "env.interface"
-    bl_label = "Run import"
+    bl_label = "Import Heightmap"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         scn = bpy.context.scene
-        self.report({'INFO'}, "env.interface :\n  Resolution : %d\n  Path : %s" % (scn["res"], scn["path"]))
+        self.report({'INFO'}, "env.interface :\n  Resolution : %d\n  Path (HeightMap) : %s" % (scn["res"], scn["path"]))
         a = BlendEnvironment()
         a.create_terrain(scn["path"], scn["res"])
+        self.report({'INFO'}, "finished import")
+        return {'FINISHED'}
+
+
+class PickleInterface(bpy.types.Operator):
+    """Environment plug-in"""
+    bl_idname = "env.pickle_interface"
+    bl_label = "Import Pickle file"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        scn = bpy.context.scene
+        self.report({'INFO'}, "env.interface :\n  Resolution : %d\n  Path (Pickle) : %s" % (scn["res"], scn["pickle_path"]))
+        a = BlendEnvironment()
+        a.import_env(scn["pickle_path"], scn["res"])
         self.report({'INFO'}, "finished import")
         return {'FINISHED'}
 
