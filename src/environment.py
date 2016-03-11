@@ -2,7 +2,6 @@ from feature_tree import FeatureTree
 from height_map import HeightMap
 
 
-
 class Environment:
     """Environment class"""
 

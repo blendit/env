@@ -15,7 +15,7 @@ class FeatureTree:
     def __init__(self, features):
         self.features = list(features)
         self.tree = None
-        self.models=[]
+        self.models = []
         self.init_tree()
 
     def init_tree(self):
