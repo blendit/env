@@ -17,6 +17,6 @@ class Environment:
 
     def export_heightmap(filename, res_x=500, res_t=500):
         if not self.heightmap_init:
-            slelf.init_heightmap(res_x, res_y)
+            self.init_heightmap(res_x, res_y)
         
         self.heightmap.export(filename)
