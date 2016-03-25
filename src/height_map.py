@@ -18,6 +18,9 @@ class HeightMap:
     def __getitem__(self, index):
         return self.hmap[index]
 
+    def __eq__(self, other):
+        return (self.size_x == other.size_x) and (self.size_y == other.size_y) and (self.hmap == other.hmap)
+
     def export(self, path):
         im = Image.fromarray(numpy.uint8(self.hmap), "L")
         # "L" specifies 8-bit grayscale integer

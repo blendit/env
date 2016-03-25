@@ -38,11 +38,11 @@ class BlendEnvironment(Environment):
 #        bpy.context.scene.render.engine = 'CYCLES'
 
     def import_env(self, pickle_path, res):
-        f = open(pickle_path, 'wb')
+        f = open(pickle_path, 'rb')
         env = pickle.load(f)
         f.close()
 
-        image = "/tmp/env" + str(int(time.time)) + ".png"
+        image = "/tmp/env" + str(int(time.time())) + ".png"
         env.export_heightmap(image)
         self.create_terrain(image, res)
         
