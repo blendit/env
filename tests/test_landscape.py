@@ -53,9 +53,11 @@ class TestVegetation(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.gen_model = AbstractModel("test.3ds", 2, (0, 0))
+        self.n1 = 100
+        self.v1 = Vegetation(self.gen_model, (20, 20), (100, 100), self.n1)
 
     def test_shape(self):
-        v1 = Vegetation(self.gen_model, (20, 20), (100, 100), 100)
+        v1 = self.v1
         
         self.assertEqual(v1.z((10, 10)), 0)
         self.assertEqual(v1.z((50, 50)), 0)
@@ -64,3 +66,17 @@ class TestVegetation(unittest.TestCase):
         self.assertEqual(v1.influence((10, 10)), 0)
         self.assertEqual(v1.influence((50, 50)), 255)
         self.assertEqual(v1.influence((140, 140)), 0)
+
+    def _influ_plus_models_v1(self, pos):
+        for m in self.v1.models:
+            if m.pos == pos:
+                return 100
+        return self.v1.influence(pos)
+
+    def test_models(self):
+        v1 = self.v1
+        self.assertEqual(len(v1.models), self.n1)
+
+        # Beautiful picture to see random positions :)
+        #hm = HeightMap(150, 150, self._influ_plus_models_v1)
+        #hm.export("tempvege.png")
