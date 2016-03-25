@@ -15,8 +15,8 @@ class FeatureTree:
     def __init__(self, features):
         self.features = list(features)
         self.tree = None
-        self.models = []
         self.init_tree()
+        self.models = self.tree.models
 
     def init_tree(self):
         '''Initialize the tree from the list of features'''
@@ -97,10 +97,9 @@ class Node(Feature):
         super(Node, self).__init__()
         
         self.children = []
+        self.models = []
         for child in children:
             self.add_child(child)
-
-        self.models = []
 
     def add_child(self, child):
         self.children.append(child)
@@ -161,8 +160,12 @@ class ReplaceNode(Node):
         self.background.add_child(node)
         self.shape = self.background.shape
         self.shape = self.shape.union(self.foreground.shape)
-        self.models += self.background.models
         self.models += self.foreground.models
+        # For models in background: keep only those which are not in the foreground
+        for model in self.background.models:
+            pos = model.pos
+            if self.foreground.influence(pos) == 0:
+                self.models.append(model)
 
 
 class AdditionNode(Node):
