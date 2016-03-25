@@ -16,5 +16,7 @@ class Model:
     def __init__(self, position=(0, 0), model=AbstractModel()):
         """* position : (x,y) coordinates in the world
         * model : AbstractModel, general model for this specific instance"""
+        (x,y) = position
         self.pos = position
+        self.pos3D = (x, y, 0)
         self.model = model
