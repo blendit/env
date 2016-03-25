@@ -75,7 +75,13 @@ class FeatureTree:
         return node
 
     def fusion_tree(self, a, b):
-        if isinstance(a, ReplaceNode) or isinstance(a, AdditionNode):
+        if isinstance(a, ReplaceNode):
+            a.add_child(b)
+            return a
+        elif isinstance(b, ReplaceNode):
+            b.add_child(a)
+            return b
+        elif isinstance(a, AdditionNode):
             a.add_child(b)
             return a
         else:
