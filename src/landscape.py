@@ -96,7 +96,7 @@ class Vegetation(Feature):
         self.base_model = model
         self.pos = pos
         
-        self.set_influence_map([[255] * size[1]] * size[0])
+        self.set_influence_map([[1.0] * size[1]] * size[0])
         self.generate_models(size[0], size[1], tree_number)
 
     def set_influence_map(self, new_influence_map):

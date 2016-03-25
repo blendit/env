@@ -64,14 +64,14 @@ class TestVegetation(unittest.TestCase):
         self.assertEqual(v1.z((140, 140)), 0)
         
         self.assertEqual(v1.influence((10, 10)), 0)
-        self.assertEqual(v1.influence((50, 50)), 255)
+        self.assertEqual(v1.influence((50, 50)), 1.0)
         self.assertEqual(v1.influence((140, 140)), 0)
 
-    def _influ_plus_models_v1(self, pos):
-        for m in self.v1.models:
-            if m.pos == pos:
-                return 100
-        return self.v1.influence(pos)
+    # def _influ_plus_models_v1(self, pos):
+    #    for m in self.v1.models:
+    #        if m.pos == pos:
+    #            return 100
+    #    return self.v1.influence(pos)
 
     def test_models(self):
         v1 = self.v1
