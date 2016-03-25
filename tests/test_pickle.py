@@ -4,6 +4,7 @@ from src.feature import Feature
 from src.height_map import HeightMap
 from src.environment import Environment
 
+
 class TestPickle(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestPickle, self).__init__(*args, **kwargs)
@@ -24,4 +25,3 @@ class TestPickle(unittest.TestCase):
         g.close()
 
         self.assertEqual(a.heightmap, b.heightmap)
-
