@@ -2,9 +2,10 @@ import numpy
 import unittest
 from tests.base import FeatureTest, compare_imgs
 
-from src.landscape import Mountain, Road, RoadNetwork
+from src.landscape import Mountain, Road, RoadNetwork, Vegetation
 from src.height_map import HeightMap
 from src.feature_tree import FeatureTree
+from src.model import *
 
 import shapely.geometry as geom
 
@@ -46,3 +47,20 @@ class TestRoads(unittest.TestCase):
         hm2 = HeightMap(80, 80, tree.z)
         hm2.export("mroad2.png")
         compare_imgs("tests/img/mroad2.png", "mroad2.png", self)
+
+
+class TestVegetation(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.gen_model = AbstractModel("test.3ds", 2, (0, 0))
+
+    def test_shape(self):
+        v1 = Vegetation(self.gen_model, (20, 20), (100, 100), 100)
+        
+        self.assertEqual(v1.z((10, 10)), 0)
+        self.assertEqual(v1.z((50, 50)), 0)
+        self.assertEqual(v1.z((140, 140)), 0)
+        
+        self.assertEqual(v1.influence((10, 10)), 0)
+        self.assertEqual(v1.influence((50, 50)), 255)
+        self.assertEqual(v1.influence((140, 140)), 0)

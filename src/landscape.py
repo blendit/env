@@ -96,12 +96,13 @@ class Vegetation(Feature):
         self.base_model = model
         self.pos = pos
         
-        self.set_influence_map([[255] * size_y] * size_x)
-        self.generate_models(size_x, size_y, tree_number)
+        self.set_influence_map([[255] * size[1]] * size[0])
+        self.generate_models(size[0], size[1], tree_number)
 
     def set_influence_map(self, new_influence_map):
         """Set a new influence map, and updates the shape consequently."""
         self.influence_map = new_influence_map
+        pos = self.pos
         s_x = len(self.influence_map)
         s_y = len(self.influence_map[0])
         self.shape = geom.Polygon([pos,
@@ -121,7 +122,13 @@ class Vegetation(Feature):
         return 0
         
     def influence(self, coord):
-        return self.influence_map[x][y]
+        x = coord[0] - self.pos[0]
+        y = coord[1] - self.pos[1]
+        if x < 0 or x > (len(self.influence_map) - 1)\
+           or y < 0 or y > (len(self.influence_map[0]) - 1):
+            return 0
+        else:
+            return self.influence_map[x][y]
 
     def interaction(self):
         return "addition"
