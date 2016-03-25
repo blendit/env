@@ -62,6 +62,7 @@ class FeatureTree:
 
         # Finally, set the disjoint trees as one unique tree
         self.tree = BlendNode(trees)
+        self.models = self.tree.models
             
     def intersecting(self, node, node_list):
         """Returuns one node in the list that is intersecting the *node*. If none exists, returns the node."""
@@ -104,6 +105,7 @@ class Node(Feature):
     def add_child(self, child):
         self.children.append(child)
         self.shape = self.shape.union(child.shape)
+        self.models += child.models
 
     def z(self, pos):
         '''Height at a given position'''
@@ -159,6 +161,8 @@ class ReplaceNode(Node):
         self.background.add_child(node)
         self.shape = self.background.shape
         self.shape = self.shape.union(self.foreground.shape)
+        self.models += self.background.models
+        self.models += self.foreground.models
 
 
 class AdditionNode(Node):
@@ -190,3 +194,5 @@ class AdditionNode(Node):
         self.background.add_child(node)
         self.shape = self.background.shape
         self.shape = self.shape.union(self.foreground.shape)
+        self.models += self.background.models
+        self.models += self.foreground.models

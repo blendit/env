@@ -9,6 +9,7 @@ import warnings
 class FeatureTest(Feature):
     """A 1-1 square feature for tests."""
     def __init__(self, z_const=2, influence="all", val_influence=0.8):
+        super().__init__()
         self.z_const = z_const
         self.shape = geom.box(0.0, 0.0, 1.0, 1.0)
         self.influ = influence
