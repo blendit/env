@@ -147,6 +147,12 @@ class ReplaceNode(Node):
         self.foreground = foreground
         self.shape = background.shape
         self.shape = self.shape.union(foreground.shape)
+        self.models = self.foreground.models
+        # For models in background: keep only those which are not in the foreground
+        for model in self.background.models:
+            pos = model.pos
+            if self.foreground.influence(pos) == 0:
+                self.models.append(model)
 
     def z(self, pos):
         alpha = self.foreground.influence(pos)
@@ -166,6 +172,7 @@ class ReplaceNode(Node):
         self.background.add_child(node)
         self.shape = self.background.shape
         self.shape = self.shape.union(self.foreground.shape)
+        self.models = []
         self.models += self.foreground.models
         # For models in background: keep only those which are not in the foreground
         for model in self.background.models:
@@ -184,6 +191,8 @@ class AdditionNode(Node):
         self.foreground = foreground
         self.shape = background.shape
         self.shape = self.shape.union(foreground.shape)
+        self.models = self.background.models
+        self.models += self.foreground.models
 
     def z(self, pos):
         alpha = self.foreground.influence(pos)
@@ -203,5 +212,6 @@ class AdditionNode(Node):
         self.background.add_child(node)
         self.shape = self.background.shape
         self.shape = self.shape.union(self.foreground.shape)
+        self.models = []
         self.models += self.background.models
         self.models += self.foreground.models
