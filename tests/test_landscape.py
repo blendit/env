@@ -78,5 +78,5 @@ class TestVegetation(unittest.TestCase):
         self.assertEqual(len(v1.models), self.n1)
 
         # Beautiful picture to see random positions :)
-        #hm = HeightMap(150, 150, self._influ_plus_models_v1)
-        #hm.export("tempvege.png")
+        # hm = HeightMap(150, 150, self._influ_plus_models_v1)
+        # hm.export("tempvege.png")
