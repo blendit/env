@@ -8,8 +8,7 @@ class Feature():
     def __init__(self):
         """coord_x, coord_y is the "middle-point" ?
         Shape is the 2D-shape (x & y axis) of our feature"""
-        self.coord_x = 0
-        self.coord_y = 0
+        self.pos = (0, 0)
 
         self.shape = geom.Polygon()
 
