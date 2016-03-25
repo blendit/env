@@ -1,5 +1,6 @@
 import numpy as np
 import shapely.geometry as geom
+from scipy.integrate import odeint
 
 from src.feature import Feature
 
@@ -47,6 +48,20 @@ class Urban(Feature):
         else:
             return 0
 
+    def tensor(self, point):
+        """Sum of all fields at the given point"""
+        tensor = np.zeros((2, 2))
+        for field in self.road_fields:
+            tensor += field.tensor(point)
+        return tensor
+
+    def draw_street(self, start, length, step, major=True):
+        """Draw a street as a stream line of the tensor field."""
+        def stream_vector(point, _):
+            return np.linalg.eigh(self.tensor(point))[1][int(major)]
+        times = np.arange(0, length, step)
+        return geom.LineString(odeint(stream_vector, start, times))
+
 
 class TensorField:
     """Base class for basic tensor fields."""
@@ -82,7 +97,7 @@ class GridField(TensorField):
         self._tensor = tensor_from_vector(vector)
 
     def tensor(self, pos):
-        dist = self.center.distance(pos)
+        dist = self.center.distance(geom.Point(pos))
         return self._tensor * np.exp(dist * dist * self.decay)
 
 

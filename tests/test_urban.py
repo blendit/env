@@ -68,3 +68,28 @@ class TestTensorFields(unittest.TestCase):
             with self.subTest(point=point):
                 mat = field.tensor(point)
                 self.assertMinorEigen(mat, gradient(point))
+
+
+class TestUrban(unittest.TestCase):
+    def test_grid_streets(self):
+        origin = geom.Point(0, 0)
+        urban = Urban(None, [GridField(np.array((1, 0)), origin, 0)])
+        street = urban.draw_street(origin, 4, 0.25, major=True)
+        for t, (x, y) in zip(np.arange(0, 4, 0.25), np.array(street)):
+            self.assertEqual(x, t)
+            self.assertEqual(y, 0)
+        street = urban.draw_street(origin, 4, 0.25, major=False)
+        for t, (x, y) in zip(np.arange(0, 4, 0.25), np.array(street)):
+            self.assertEqual(x, 0)
+            self.assertEqual(y, t)
+
+    def test_radial_streets(self):
+        origin = geom.Point(0, 0)
+        urban = Urban(None, [RadialField(origin, 0)])
+        street = urban.draw_street(geom.Point(5, 0), 4, 0.25, major=True)
+        for x, y in np.array(street):
+            self.assertAlmostEqual(x * x + y * y, 25, places=6)
+        street = urban.draw_street(geom.Point(1, 0), 4, 0.25, major=False)
+        for t, (x, y) in zip(np.arange(1, 5, 0.25), np.array(street)):
+            self.assertAlmostEqual(x, t)
+            self.assertAlmostEqual(y, 0)
