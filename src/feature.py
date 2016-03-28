@@ -8,10 +8,11 @@ class Feature():
     def __init__(self):
         """coord_x, coord_y is the "middle-point" ?
         Shape is the 2D-shape (x & y axis) of our feature"""
-        self.coord_x = 0
-        self.coord_y = 0
+        self.pos = (0, 0)
 
         self.shape = geom.Polygon()
+
+        self.models = []
 
     def intersect(self, feature2):
         """Returns *true* if the feature intersects *feature2*.
@@ -43,6 +44,8 @@ class FeatureLine(Feature):
         self.line = geom.LineString(points)
         self.thickness = thickness
         self._update_shape()
+
+        self.models = []
 
     def _update_shape(self):
         """Updates the shape to match the current path and thickness."""
