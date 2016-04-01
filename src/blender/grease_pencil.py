@@ -4,6 +4,7 @@ import random
 # how to deal with this ? pencil.layers[0] = GP_Layer.001, ..., pencil.layers[n-1] = GP_Layer.00n, pencil.layers[n] = GP_Layer... (but GP Layer first one)
 # nb, can change gen_name(i) in id ? maybe not...
 
+
 def initSceneProperties(scn):
     scn["i"] = 0
     return
@@ -17,7 +18,7 @@ def print_points():
             for stroke in enumerate(pencil.active_frame.strokes):
                 stroke_points = pencil.active_frame.strokes[0].points
                 for point in stroke_points:
-                    print("\t(" + str(point.co.x) + ", " + str(point.co.y) + ", " + str( point.co.z) + ")")
+                    print("\t(" + str(point.co.x) + ", " + str(point.co.y) + ", " + str(point.co.z) + ")")
         except AttributeError:
             print("\tempty")
             
