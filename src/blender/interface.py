@@ -11,7 +11,14 @@ import sys
 script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(script_dir)
 
+
+from src.blender.import_deps import import_deps()
+
+import_deps()
+
 from src.blender.blend_environment import BlendEnvironment
+
+
 
 
 def initSceneProperties(scn):
@@ -33,8 +40,6 @@ def initSceneProperties(scn):
     scn["pickle_path"] = script_dir + "/test.p"
 
     return
-
-initSceneProperties(bpy.context.scene)
 
 
 class EnvPanel(bpy.types.Panel):
@@ -112,4 +117,7 @@ def unregister():
 
 
 if __name__ == "__main__":
+    initSceneProperties(bpy.context.scene)
     register()
+
+
