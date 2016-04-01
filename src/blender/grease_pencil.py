@@ -3,15 +3,20 @@ import random
 
 i = 0  # global variable is baaad. Improvement : add it in the context...
 
+# how to deal with this ? pencil.layers[0] = GP_Layer.001, ..., pencil.layers[n-1] = GP_Layer.00n, pencil.layers[n] = GP_Layer... (but GP Layer first one)
+# nb, can change gen_name(i) in id ?
 
 def print_points():
     # print points defined using pencil
-    pencil = bpy.data.grease_pencil[0]
-    for i, stroke in enumerate(pencil.layers[0].active_frame.strokes):
+    for i, pencil in enumerate(bpy.data.grease_pencil[0].layers):
         print("step " + str(i))
-        stroke_points = pencil.layers[0].active_frame.strokes[i].points
-        for point in stroke_points:
-            print((point.co.x, point.co.y, point.co.z))
+        try:
+            for stroke in enumerate(pencil.active_frame.strokes):
+                stroke_points = pencil.active_frame.strokes[0].points
+                for point in stroke_points:
+                    print("\t(" + str(point.co.x) + ", " + str(point.co.y) + ", " + str( point.co.z) + ")")
+        except AttributeError:
+            print("\tempty")
             
 
 def gen_name(i):
@@ -40,12 +45,13 @@ class ToolsPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         scn = context.scene
-        layout.operator("path.execute")
-        layout.operator("path.stop")
+        layout.operator("drawenv.execute")
+        layout.operator("drawenv.stop")
+        layout.operator("drawenv.print")
 
 
 class OBJECT_OT_ToolsButton(bpy.types.Operator):
-    bl_idname = "path.execute"
+    bl_idname = "drawenv.execute"
     bl_label = "Draw me something"
 
     def execute(self, context):
@@ -57,7 +63,7 @@ class OBJECT_OT_ToolsButton(bpy.types.Operator):
 
 
 class OBJECT_OT2_ToolsButton(bpy.types.Operator):
-    bl_idname = "path.stop"
+    bl_idname = "drawenv.stop"
     bl_label = "Done"
 
     def execute(self, context):
@@ -67,9 +73,15 @@ class OBJECT_OT2_ToolsButton(bpy.types.Operator):
         bpy.ops.gpencil.layer_move()
         self.report({'INFO'}, "stopping drawing")
         return {'FINISHED'}
-    
+
+
+class OBJECT_OT3_ToolsButton(bpy.types.Operator):
+    bl_idname = "drawenv.print"
+    bl_label = "Print points"
+
+    def execute(self, context):
+        print_points()
+        return {'FINISHED'}
+
 
 bpy.utils.register_module(__name__)
-    
-# change_color()
-# print_points()
