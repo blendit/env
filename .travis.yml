@@ -9,11 +9,11 @@ before_install:
   - conda update --yes conda
 
 install:
+  - "conda install --yes python=$TRAVIS_PYTHON_VERSION scipy"
   - "pip install pep8"
   - "pip install coveralls"
   - "pip install shapely"
   - "pip install pillow"
-  - "conda install --yes python=$TRAVIS_PYTHON_VERSION scipy"
 
 before_script: "pep8 . --ignore=W293,E501"
 
