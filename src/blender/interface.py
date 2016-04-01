@@ -19,8 +19,6 @@ import_deps()
 from src.blender.blend_environment import BlendEnvironment
 
 
-
-
 def initSceneProperties(scn):
     bpy.types.Scene.res = bpy.props.IntProperty(name="Resolution", default=1, min=1, max=10)
     scn["res"] = 1
@@ -119,5 +117,3 @@ def unregister():
 if __name__ == "__main__":
     initSceneProperties(bpy.context.scene)
     register()
-
-
