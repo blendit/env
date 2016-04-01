@@ -55,10 +55,12 @@ class Urban(Feature):
             tensor += field.tensor(point)
         return tensor
 
-    def draw_street(self, start, length, step, major=True):
+    def draw_street(self, start, length, step, major=True, reverse=False):
         """Draw a street as a stream line of the tensor field."""
+        vect_index = int(major)
+        sign = (-1) ** int(reverse)
         def stream_vector(point, _):
-            return np.linalg.eigh(self.tensor(point))[1][int(major)]
+            return sign * np.linalg.eigh(self.tensor(point))[1][vect_index]
         times = np.arange(0, length, step)
         return geom.LineString(odeint(stream_vector, start, times))
 

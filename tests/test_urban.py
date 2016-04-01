@@ -74,22 +74,43 @@ class TestUrban(unittest.TestCase):
     def test_grid_streets(self):
         origin = geom.Point(0, 0)
         urban = Urban(None, [GridField(np.array((1, 0)), origin, 0)])
+
+        # Major stream line
         street = urban.draw_street(origin, 4, 0.25, major=True)
         for t, (x, y) in zip(np.arange(0, 4, 0.25), np.array(street)):
             self.assertEqual(x, t)
             self.assertEqual(y, 0)
+
+        # Minor stream line
         street = urban.draw_street(origin, 4, 0.25, major=False)
         for t, (x, y) in zip(np.arange(0, 4, 0.25), np.array(street)):
             self.assertEqual(x, 0)
             self.assertEqual(y, t)
 
+        # Reverse direction along major stream line
+        street = urban.draw_street(origin, 4, 0.25, reverse=True)
+        for t, (x, y) in zip(np.arange(0, 4, 0.25), np.array(street)):
+            self.assertEqual(x, -t)
+            self.assertEqual(y, 0)
+
     def test_radial_streets(self):
         origin = geom.Point(0, 0)
         urban = Urban(None, [RadialField(origin, 0)])
+
+        # Major stream line: circle
         street = urban.draw_street(geom.Point(5, 0), 4, 0.25, major=True)
         for x, y in np.array(street):
             self.assertAlmostEqual(x * x + y * y, 25, places=6)
+        circle = street.coords
+
+        # Minor stream line: radial line
         street = urban.draw_street(geom.Point(1, 0), 4, 0.25, major=False)
         for t, (x, y) in zip(np.arange(1, 5, 0.25), np.array(street)):
             self.assertAlmostEqual(x, t)
             self.assertAlmostEqual(y, 0)
+
+        # Reverse major stream line
+        street = urban.draw_street(circle[-1], 4, 0.25, reverse=True)
+        for (x, y), (x0, y0) in zip(np.array(street), reversed(circle)):
+            self.assertAlmostEqual(x, x0, places=6)
+            self.assertAlmostEqual(y, y0, places=6)
