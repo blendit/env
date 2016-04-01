@@ -58,3 +58,6 @@ target/
 
 # file ending with ~
 *~
+
+# Pngs at the root
+*.png
