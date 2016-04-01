@@ -11,7 +11,7 @@ import sys
 script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(script_dir)
 
-from src.blend_environment import BlendEnvironment
+from src.blender.blend_environment import BlendEnvironment
 
 
 def initSceneProperties(scn):
@@ -68,7 +68,7 @@ class EnvInterface(bpy.types.Operator):
 
 
 class PickleInterface(bpy.types.Operator):
-    """Environment plug-in"""
+    """Pickle Environment import"""
     bl_idname = "env.pickle_interface"
     bl_label = "Import Pickle file"
     bl_options = {'REGISTER', 'UNDO'}
