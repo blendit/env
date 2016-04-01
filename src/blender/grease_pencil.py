@@ -1,10 +1,13 @@
 import bpy
 import random
 
-i = 0  # global variable is baaad. Improvement : add it in the context...
-
 # how to deal with this ? pencil.layers[0] = GP_Layer.001, ..., pencil.layers[n-1] = GP_Layer.00n, pencil.layers[n] = GP_Layer... (but GP Layer first one)
-# nb, can change gen_name(i) in id ?
+# nb, can change gen_name(i) in id ? maybe not...
+
+def initSceneProperties(scn):
+    scn["i"] = 0
+    return
+
 
 def print_points():
     # print points defined using pencil
@@ -55,10 +58,9 @@ class OBJECT_OT_ToolsButton(bpy.types.Operator):
     bl_label = "Draw me something"
 
     def execute(self, context):
-        global i
         self.report({'INFO'}, "starting drawing")
         bpy.ops.gpencil.draw('INVOKE_REGION_WIN', mode="DRAW_POLY")
-        change_color(i)
+        change_color(bpy.context.scene["i"])
         return {'FINISHED'}
 
 
@@ -67,8 +69,7 @@ class OBJECT_OT2_ToolsButton(bpy.types.Operator):
     bl_label = "Done"
 
     def execute(self, context):
-        global i
-        i += 1
+        bpy.context.scene["i"] += 1
         bpy.ops.gpencil.layer_add()
         bpy.ops.gpencil.layer_move()
         self.report({'INFO'}, "stopping drawing")
@@ -84,4 +85,5 @@ class OBJECT_OT3_ToolsButton(bpy.types.Operator):
         return {'FINISHED'}
 
 
+initSceneProperties(bpy.context.scene)
 bpy.utils.register_module(__name__)
