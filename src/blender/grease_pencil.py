@@ -6,6 +6,14 @@ import random
 
 
 def initSceneProperties(scn):
+    myItems = [('Vegetation', 'Vegetation', 'Vegetation'),
+               ('Mountain', 'Mountain', 'Mountain'),
+               ('Urban', 'Urban', 'Urban'),
+               ('Water', 'Water', 'Water')]
+    bpy.types.Scene.MyEnum = bpy.props.EnumProperty(
+        items=myItems,
+        name="Feature choice")
+    scn['MyEnum'] = 2
     scn["i"] = 0
     return
 
@@ -39,7 +47,7 @@ def change_color(i):
           " " + str(bpy.data.grease_pencil["GPencil"].layers[name].fill_color[2]))
     bpy.data.grease_pencil["GPencil"].layers[name].fill_alpha = 1
 
-
+    
 class ToolsPanel(bpy.types.Panel):
     bl_category = "ENV"
     bl_label = "env panel"
@@ -84,6 +92,18 @@ class OBJECT_OT3_ToolsButton(bpy.types.Operator):
     def execute(self, context):
         print_points()
         return {'FINISHED'}
+
+    
+class FeaturePanel(bpy.types.Panel):
+    bl_category = "ENV"
+    bl_label = "feature panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+
+    def draw(self, context):
+        layout = self.layout
+        scn = context.scene
+        layout.prop(scn, 'MyEnum')
 
 
 initSceneProperties(bpy.context.scene)
