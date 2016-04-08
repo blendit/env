@@ -1,5 +1,5 @@
 import unittest
-from src.feature import Feature, FeatureLine
+from src.feature import Feature, FeatureLine, ImageFeature
 import shapely.geometry as geom
 
 
@@ -51,3 +51,16 @@ class TestFeature(unittest.TestCase):
 
     def test_influence(self):
         self.f1.influence((0, 0))
+
+
+from src.height_map import HeightMap
+from tests.base import compare_imgs
+
+
+class TestImageFeature(unittest.TestCase):
+    def test_image_feature(self):
+        feat = ImageFeature("tests/img/mtree.png")
+        hm = HeightMap(100, 100, feat.z)
+        hm.export("imagefeat.png")
+
+        compare_imgs("tests/img/mtree.png", "imagefeat.png", self)
