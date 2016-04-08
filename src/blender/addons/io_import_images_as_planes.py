@@ -37,13 +37,13 @@ import os
 import collections
 
 from bpy.props import (
-        StringProperty,
-        BoolProperty,
-        EnumProperty,
-        IntProperty,
-        FloatProperty,
-        CollectionProperty,
-        )
+    StringProperty,
+    BoolProperty,
+    EnumProperty,
+    IntProperty,
+    FloatProperty,
+    CollectionProperty,
+)
 
 from bpy_extras.object_utils import AddObjectHelper, object_data_add
 from bpy_extras.image_utils import load_image
@@ -80,6 +80,7 @@ CYCLES_SHADERS = (
     ('BSDF_DIFFUSE_BSDF_TRANSPARENT', "Diffuse & Transparent", "Diffuse and Transparent Mix"),
     ('EMISSION_BSDF_TRANSPARENT', "Emission & Transparent", "Emission and Transparent Mix")
 )
+
 
 # -----------------------------------------------------------------------------
 # Misc utils.
@@ -138,7 +139,7 @@ def auto_align_nodes(node_tree):
             node.location.x = to_node.location.x - x_gap
             node.location.y = to_node.location.y
             node.location.y -= i * y_gap
-            node.location.y += (len(from_nodes)-1) * y_gap / (len(from_nodes))
+            node.location.y += (len(from_nodes) - 1) * y_gap / (len(from_nodes))
             align(node, nodes, links)
 
     align(to_node, nodes, links)
@@ -199,7 +200,7 @@ class IMPORT_OT_image_to_plane(Operator, AddObjectHelper):
         space.params.use_filter_movie = self.filter_movie
         space.params.filter_glob = self.filter_glob
         # XXX Seems to be necessary, else not all changes above take effect...
-        #~ bpy.ops.file.refresh()
+        # ~ bpy.ops.file.refresh()
     extension = EnumProperty(name="Extension", items=gen_ext_filter_ui_items(),
                              description="Only import files of this type", update=update_extensions)
 
@@ -233,7 +234,7 @@ class IMPORT_OT_image_to_plane(Operator, AddObjectHelper):
     t = bpy.types.Material.bl_rna.properties["use_transparent_shadows"]
     use_transparent_shadows = BoolProperty(name=t.name, default=False, description=t.description)
 
-    #-------------------------
+    # -------------------------
     # Cycles material options.
     shader = EnumProperty(name="Shader", items=CYCLES_SHADERS, description="Node shader to use")
 
@@ -290,7 +291,7 @@ class IMPORT_OT_image_to_plane(Operator, AddObjectHelper):
         elif engine == 'CYCLES':
             box = layout.box()
             box.label("Material Settings: (Cycles)", icon='MATERIAL')
-            box.prop(self, 'shader', expand = True)
+            box.prop(self, 'shader', expand=True)
             box.prop(self, 'overwrite_node_tree')
 
         box = layout.box()
@@ -471,7 +472,7 @@ class IMPORT_OT_image_to_plane(Operator, AddObjectHelper):
         material.use_shadeless = self.use_shadeless
         material.use_transparent_shadows = self.use_transparent_shadows
 
-    #--------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     # Cycles
     def create_cycles_texnode(self, context, node_tree, image):
         tex_image = node_tree.nodes.new('ShaderNodeTexImage')
