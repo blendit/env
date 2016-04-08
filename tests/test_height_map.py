@@ -55,5 +55,5 @@ class TestHeightMapTree(unittest.TestCase):
         
         heightmap = HeightMap(100, 100, tree.z)
 
-        self.assertRaises(None, heightmap.export("mtree.png"))
+        heightmap.export("mtree.png")
         compare_imgs("tests/img/mtree.png", "mtree.png", self)
