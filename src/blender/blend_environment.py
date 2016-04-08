@@ -44,7 +44,6 @@ class BlendEnvironment(Environment):
             bpy.ops.object.modifier_add(type='SUBSURF')
         
         bpy.data.lamps['Lamp'].type = 'SUN'
-#        bpy.context.scene.render.engine = 'CYCLES'
 
     def import_env(self, pickle_path, res):
         f = open(pickle_path, 'rb')

@@ -4,6 +4,9 @@ import random
 # how to deal with this ? pencil.layers[0] = GP_Layer.001, ..., pencil.layers[n-1] = GP_Layer.00n, pencil.layers[n] = GP_Layer... (but GP Layer first one)
 # nb, can change gen_name(i) in id ? maybe not...
 
+def upd_enum(self, context):
+    print(self['MyEnum'])
+
 
 def initSceneProperties(scn):
     myItems = [('Vegetation', 'Vegetation', 'Vegetation'),
@@ -12,7 +15,8 @@ def initSceneProperties(scn):
                ('Water', 'Water', 'Water')]
     bpy.types.Scene.MyEnum = bpy.props.EnumProperty(
         items=myItems,
-        name="Feature choice")
+        name="Feature choice",
+        update=upd_enum)
     scn['MyEnum'] = 2
     scn["i"] = 0
     return
@@ -64,10 +68,11 @@ class ToolsPanel(bpy.types.Panel):
 
 class OBJECT_OT_ToolsButton(bpy.types.Operator):
     bl_idname = "drawenv.execute"
-    bl_label = "Draw me something"
+    bl_label = "Draw something"
 
     def execute(self, context):
         self.report({'INFO'}, "starting drawing")
+        bpy.ops.view3d.viewnumpad(type='TOP', align_active=False)
         bpy.ops.gpencil.draw('INVOKE_REGION_WIN', mode="DRAW_POLY")
         change_color(bpy.context.scene["i"])
         return {'FINISHED'}
