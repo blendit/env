@@ -7,9 +7,22 @@ bl_info = {
 import bpy
 import os
 import sys
+import subprocess
+import ast
 
 script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(script_dir)
+
+# Get system's python path
+proc = subprocess.Popen('python3 path.py', stdout=subprocess.PIPE, shell=True)
+out, err = proc.communicate()
+paths = ast.literal_eval(out.decode("utf-8"))
+sys.path += (paths)
+
+# Add-ons import
+filename = script_dir + "/src/blender/addons/io_import_images_as_planes.py"
+exec(compile(open(filename).read(), filename, 'exec'))
+
 
 from src.blender.blend_environment import BlendEnvironment
 
@@ -33,8 +46,6 @@ def initSceneProperties(scn):
     scn["pickle_path"] = script_dir + "/test.p"
 
     return
-
-initSceneProperties(bpy.context.scene)
 
 
 class EnvPanel(bpy.types.Panel):
@@ -112,4 +123,5 @@ def unregister():
 
 
 if __name__ == "__main__":
+    initSceneProperties(bpy.context.scene)
     register()

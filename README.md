@@ -7,6 +7,4 @@ This project is an addon for Blender to generate environments.
 - shapely (use pip3 install shapely)
 - pillow for python3 (same)
 
-Copy the 'PIL' and 'shapely' directory from your local 'site-packages' into blender/version/python/lib/python3.4/
-
 [![Coverage Status](https://coveralls.io/repos/github/blendit/env/badge.svg?branch=master)](https://coveralls.io/github/blendit/env?branch=master)
