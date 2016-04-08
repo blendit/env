@@ -4,6 +4,7 @@ import random
 # how to deal with this ? pencil.layers[0] = GP_Layer.001, ..., pencil.layers[n-1] = GP_Layer.00n, pencil.layers[n] = GP_Layer... (but GP Layer first one)
 # nb, can change gen_name(i) in id ? maybe not...
 
+
 def upd_enum(self, context):
     print(self['MyEnum'])
 

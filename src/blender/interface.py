@@ -19,10 +19,6 @@ out, err = proc.communicate()
 paths = ast.literal_eval(out.decode("utf-8"))
 sys.path += (paths)
 
-# Add-ons import
-filename = script_dir + "/src/blender/addons/io_import_images_as_planes.py"
-exec(compile(open(filename).read(), filename, 'exec'))
-
 
 from src.blender.blend_environment import BlendEnvironment
 
