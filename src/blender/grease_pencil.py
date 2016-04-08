@@ -72,6 +72,7 @@ class OBJECT_OT_ToolsButton(bpy.types.Operator):
 
     def execute(self, context):
         self.report({'INFO'}, "starting drawing")
+        bpy.ops.view3d.viewnumpad(type='TOP', align_active=False)
         bpy.ops.gpencil.draw('INVOKE_REGION_WIN', mode="DRAW_POLY")
         change_color(bpy.context.scene["i"])
         return {'FINISHED'}
