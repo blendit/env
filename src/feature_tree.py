@@ -31,19 +31,19 @@ class FeatureTree:
 
         # Second pass for others (Replace and Addition)
         for feat in self.features[:]:
-                if feat.interaction() != "blend":
-                    background = self.intersecting(feat, self.features)
-                    node = None
+            if not isinstance(feat, Node) and feat.interaction() != "blend":
+                background = self.intersecting(feat, self.features)
+                node = None
+                
+                if feat.interaction() == "replace":
+                    node = ReplaceNode(background, feat)
+                elif feat.interaction() == "addition":
+                    node = AdditionNode(background, feat)
                     
-                    if feat.interaction() == "replace":
-                        node = ReplaceNode(background, feat)
-                    elif feat.interaction() == "addition":
-                        node = AdditionNode(background, feat)
-                        
-                    self.features.remove(background)
-                    if(feat != background):
-                        self.features.remove(feat)
-                    self.features.append(node)
+                self.features.remove(background)
+                if(feat != background):
+                    self.features.remove(feat)
+                self.features.append(node)
 
         # Construct the tree
         trees = []
@@ -134,7 +134,10 @@ class BlendNode(Node):
                                  weights=w)
 
     def influence(self, pos):
-        return numpy.sum(c.influence(pos) for c in self.children)
+        if len(self.children) == 0:
+            return 0
+        else:
+            return numpy.sum(c.influence(pos) for c in self.children)
 
 
 class ReplaceNode(Node):
