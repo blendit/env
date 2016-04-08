@@ -21,19 +21,28 @@ class BlendEnvironment(Environment):
         i.close()
         
         bpy.ops.object.delete(use_global=False)
-        # maybe we need to activate import_image.to_plane within blender...
+
+        # Import image
         bpy.ops.import_image.to_plane(files=[{"name": image_name}], directory=image_dir, filter_image=True, filter_movie=True, filter_glob="", relative=False)
         bpy.ops.transform.resize(value=(14, 14, 14), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+
+        # Subdivide
         bpy.ops.object.editmode_toggle()
         bpy.ops.mesh.subdivide(number_cuts=maxi, smoothness=0)
         for x in range(res - 1):
             bpy.ops.mesh.subdivide(smoothness=0)
         bpy.ops.object.editmode_toggle()
-        bpy.ops.object.modifier_add(type='DISPLACE')
-        bpy.context.object.modifiers["Displace"].texture = bpy.data.textures[image]
-        bpy.context.object.modifiers["Displace"].strength = 0.2
-        bpy.context.object.modifiers["Displace"].texture_coords = 'UV'
-        bpy.ops.object.modifier_add(type='SUBSURF')
+
+        ob = bpy.context.object
+        if ob is None or ob.type != 'MESH':
+            print("Need an active Mesh object!")
+        else:
+            bpy.ops.object.modifier_add(type='DISPLACE')
+            ob.modifiers["Displace"].texture = bpy.data.textures[image]
+            ob.modifiers["Displace"].strength = 0.2
+            ob.modifiers["Displace"].texture_coords = 'UV'
+            bpy.ops.object.modifier_add(type='SUBSURF')
+        
         bpy.data.lamps['Lamp'].type = 'SUN'
 #        bpy.context.scene.render.engine = 'CYCLES'
 
