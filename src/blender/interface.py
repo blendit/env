@@ -24,10 +24,6 @@ filename = script_dir + "/src/blender/addons/io_import_images_as_planes.py"
 exec(compile(open(filename).read(), filename, 'exec'))
 
 
-from src.blender.import_deps import import_deps
-
-import_deps()
-
 from src.blender.blend_environment import BlendEnvironment
 
 
