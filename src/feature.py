@@ -82,7 +82,8 @@ class ImageFeature(Feature):
         coord = geom.Point(coord)
         
         if self.shape.touches(coord) or self.shape.contains(coord):
-            return self.pixels[int(y)][int(x)]
+            r, g, b = self.pixels[int(y)][int(x)]
+            return 0.2989 * r + 0.5870 * g + 0.1140 * b
         else:
             return 0
 
