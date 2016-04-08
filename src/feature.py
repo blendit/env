@@ -78,7 +78,7 @@ class ImageFeature(Feature):
         self.shape = geom.box(0, 0, width, height)
 
     def z(self, coord):
-        (x,y) = coord
+        (x, y) = coord
         coord = geom.Point(coord)
         
         if self.shape.touches(coord) or self.shape.contains(coord):
@@ -92,4 +92,3 @@ class ImageFeature(Feature):
             return 1
         else:
             return 0
-    
