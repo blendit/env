@@ -11,8 +11,12 @@ import sys
 script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(script_dir)
 
+# Add-ons import
+filename = script_dir + "/src/blender/addons/io_import_images_as_planes.py"
+exec(compile(open(filename).read(), filename, 'exec'))
 
-from src.blender.import_deps import import_deps()
+
+from src.blender.import_deps import import_deps
 
 import_deps()
 
