@@ -11,20 +11,21 @@ class Landscape(Feature):
     """Landscape class"""
 
     def __init__(self):
-        pass
+        super(Landscape, self).__init__()
 
 
 class Mountain(Landscape):
     """A mountain"""
 
-    def __init__(self, radius, center_z, center_pos=(0, 0), freqs=[0.1, 0.2], amplis=[1, 2], noise=None):
+    def __init__(self, radius, center_z, center_pos=(0, 0), freqs=[random.random() for x in range(10)], amplis=[10-x for x in range(10)], noise=None):
         """NB: len(freqs) should equal len(amplis)"""
+        super(Mountain, self).__init__()
+        self.radius = int(numpy.sqrt(radius))**2 # rescaling
         if(noise is None):
-            self.default_noise_grid = random.normal(0, 1, 100).reshape(10, 10)
+            self.default_noise_grid = random.normal(0, 1, self.radius).reshape(int(numpy.sqrt(self.radius)), int(numpy.sqrt(self.radius)))
             self.noise = self.default_noise
         else:
             self.noise = noise
-        self.radius = radius
         center = geom.Point(*center_pos)
         self.center_pos = numpy.array(center)
         self.center_z = center_z
@@ -34,7 +35,11 @@ class Mountain(Landscape):
         self.amplis = amplis
 
     def default_noise(self, coord):
-        return self.default_noise_grid[int(coord[0]), int(coord[1])]
+        try:
+            return self.default_noise_grid[int(coord[0]), int(coord[1])]
+        except IndexError:
+            print(coord)
+            raise IndexError
 
     def z(self, coord):
         """Generation of a height given a plane coordinate. Formula from [GGP+15], subsection 4.1"""
