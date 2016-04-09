@@ -26,6 +26,7 @@ from src.landscape import Mountain
 feature_list = []
 # if we put feature_list into scn, it is transformed into a read-only IDPropertyArray :'(
 
+
 def upd_enum(self, context):
     print(self['MyEnum'])
 
@@ -74,13 +75,15 @@ def change_color(i):
           " " + str(bpy.data.grease_pencil["GPencil"].layers[name].fill_color[2]))
     bpy.data.grease_pencil["GPencil"].layers[name].fill_alpha = 1
 
+
 def dist(a, b):
     return (a[0] - b[0])**2 + (a[1] - b[1])**2
-    
+
+
 def gen_feature(feature_name, shape):
     print("Called gen_feature @ %s" % feature_name)
     if(feature_name == "Mountain"):
-        p = Polygon(list(map(lambda x: (10*x[0], 10*x[1]), shape)))
+        p = Polygon(list(map(lambda x: (10 * x[0], 10 * x[1]), shape)))
         center_z = 0
         center_pos = p.centroid.coords[0]
         rd = max([dist(x, center_pos) for x in p.exterior.coords])
@@ -96,7 +99,8 @@ def gen_feature(feature_name, shape):
         pass
     elif(feature_name == "River"):
         pass
-    
+
+
 class ToolsPanel(bpy.types.Panel):
     bl_category = "ENV"
     bl_label = "env panel"
@@ -147,6 +151,7 @@ class OBJECT_OT3_ToolsButton(bpy.types.Operator):
         print_points()
         return {'FINISHED'}
 
+
 class OBJECT_OT4_ToolsButton(bpy.types.Operator):
     bl_idname = "drawenv.gen"
     bl_label = "Generate environment"
@@ -172,7 +177,6 @@ class FeaturePanel(bpy.types.Panel):
         layout.prop(scn, 'MyEnum')
 
 
-        
 if __name__ == "__main__":
     initSceneProperties(bpy.context.scene)
     bpy.utils.register_module(__name__)

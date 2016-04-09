@@ -17,10 +17,10 @@ class Landscape(Feature):
 class Mountain(Landscape):
     """A mountain"""
 
-    def __init__(self, radius, center_z, center_pos=(0, 0), freqs=[random.random() for x in range(10)], amplis=[10-x for x in range(10)], noise=None):
+    def __init__(self, radius, center_z, center_pos=(0, 0), freqs=[random.random() for x in range(10)], amplis=[10 - x for x in range(10)], noise=None):
         """NB: len(freqs) should equal len(amplis)"""
         super(Mountain, self).__init__()
-        self.radius = int(numpy.sqrt(radius))**2 # rescaling
+        self.radius = int(numpy.sqrt(radius))**2  # rescaling
         if(noise is None):
             self.default_noise_grid = random.normal(0, 1, self.radius).reshape(int(numpy.sqrt(self.radius)), int(numpy.sqrt(self.radius)))
             self.noise = self.default_noise
