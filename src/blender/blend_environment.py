@@ -25,6 +25,7 @@ class BlendEnvironment(Environment):
 
         # Resize
         bpy.ops.transform.resize(value=(14, 14, 14), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        bpy.ops.transform.translate(value=(0, 0, 3.5), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
         # Subdivide
         bpy.ops.object.editmode_toggle()
@@ -57,6 +58,24 @@ class BlendEnvironment(Environment):
         image = "/tmp/env" + str(int(time.time())) + ".png"
         env.export_heightmap(image)
         self.create_terrain(image, res)
+
+        # Import models
+        for model in env.models:
+            bpy.ops.import_scene.obj(filepath=model.model.path, axis_forward='-Z', axis_up='Y')
+
+            s = model.model.size
+            bpy.ops.transform.resize(value=(s, s, s), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+            bpy.ops.transform.translate(value=(-14, 14, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+
+            x, y, z = model.pos3D
+            print(x, y, z)
+            
+            x *= 28 / env.res_x
+            y *= -28 / env.res_y
+            z *= 7/255
+            bpy.ops.transform.translate(value=(x, y, z), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+
+
         
     def render(self, final_result):
         bpy.context.scene.render.filepath = final_result
