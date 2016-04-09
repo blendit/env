@@ -5,7 +5,7 @@ from src.feature_tree import BlendNode, ReplaceNode, AdditionNode, FeatureTree
 from src.height_map import HeightMap
 from src.feature import Feature
 
-from tests.base import FeatureTest, FeatureTestReplace, FeatureTestAddition
+from tests.base import FeatureTest, FeatureTestReplace, FeatureTestAddition, 
 
 
 class TestClassesNodes(unittest.TestCase):
@@ -102,9 +102,5 @@ class TestClassFeatureTree(unittest.TestCase):
     def test_mountain(self):
         m2 = Mountain(10**4, 0, (50, 50))
         t = FeatureTree([m2])
-        for x in range(100):
-            for y in range(100):
-                print(t.z((x, y)), end="")
-            print()
         u = HeightMap(100, 100, t.z)
-        u.export("mountain_as_ft.png")
+        # u.export("mountain_as_ft.png")

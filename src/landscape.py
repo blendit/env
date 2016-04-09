@@ -50,7 +50,7 @@ class Mountain(Landscape):
         else:
             return 0
 
-    def influence_weight(self, coord):
+    def influence(self, coord):
         return 1
 
 
