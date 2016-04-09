@@ -30,7 +30,7 @@ class TestMountain(unittest.TestCase):
         self.assertEqual(self.m1.z(out_of_radius_3), 0)
 
     def test_influence_weight(self):
-        self.assertEqual(self.m1.influence_weight((0, 0)), 1)
+        self.assertEqual(self.m1.influence((0, 0)), 1)
 
 
 class TestRoads(unittest.TestCase):
