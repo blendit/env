@@ -68,8 +68,6 @@ class BlendEnvironment(Environment):
             bpy.ops.transform.translate(value=(-14, 14, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
             x, y, z = model.pos3D
-            print(x, y, z)
-            
             x *= 28 / env.res_x
             y *= -28 / env.res_y
             z *= 7 / 255
