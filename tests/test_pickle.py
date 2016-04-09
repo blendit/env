@@ -31,7 +31,6 @@ class TestPickle(unittest.TestCase):
 
         self.assertEqual(a.heightmap, b.heightmap)
 
-
     def test_mountains(self):
         mount = ImageFeature("tests/img/mount_200.png")
         
@@ -48,4 +47,3 @@ class TestPickle(unittest.TestCase):
         f.close()
 
         env.export_heightmap("bla.png", 200, 200)
-        

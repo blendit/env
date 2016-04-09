@@ -27,9 +27,9 @@ class Environment:
         self.heightmap_init = True
 
     def export_heightmap(self, filename, res_x=None, res_y=None):
-        if res_x == None:
+        if res_x is None:
             res_x = self.res_x
-        if res_y == None:
+        if res_y is None:
             res_y = self.res_y
         
         if not self.heightmap_init:
