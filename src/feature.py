@@ -1,4 +1,6 @@
 import shapely.geometry as geom
+from PIL import Image
+import warnings
 
 
 class Feature():
@@ -8,10 +10,11 @@ class Feature():
     def __init__(self):
         """coord_x, coord_y is the "middle-point" ?
         Shape is the 2D-shape (x & y axis) of our feature"""
-        self.coord_x = 0
-        self.coord_y = 0
+        self.pos = (0, 0)
 
         self.shape = geom.Polygon()
+
+        self.models = []
 
     def intersect(self, feature2):
         """Returns *true* if the feature intersects *feature2*.
@@ -44,6 +47,8 @@ class FeatureLine(Feature):
         self.thickness = thickness
         self._update_shape()
 
+        self.models = []
+
     def _update_shape(self):
         """Updates the shape to match the current path and thickness."""
         self.shape = self.line.buffer(self.thickness, cap_style=geom.CAP_STYLE.flat, join_style=geom.JOIN_STYLE.round)
@@ -55,3 +60,36 @@ class FeatureLine(Feature):
         * "replace" (default for FeatureLine): one feature erase one other (**only two features**)
         * "addition": add one feature over another (**only two features**)."""
         return "replace"
+
+
+class ImageFeature(Feature):
+    """A basic feature whose z is simply an image"""
+    def __init__(self, image_path):
+        super().__init__()
+
+        # Ignore PIL warnings
+        warnings.simplefilter("ignore", ResourceWarning)
+
+        im = Image.open(image_path)
+        pixels = list(im.getdata())
+        width, height = im.size
+        self.pixels = [pixels[i * width:(i + 1) * width] for i in range(height)]
+
+        self.shape = geom.box(0, 0, width, height)
+
+    def z(self, coord):
+        (x, y) = coord
+        coord = geom.Point(coord)
+        
+        if self.shape.touches(coord) or self.shape.contains(coord):
+            r, g, b = self.pixels[int(y)][int(x)]
+            return 0.2989 * r + 0.5870 * g + 0.1140 * b
+        else:
+            return 0
+
+    def influence(self, coord):
+        coord = geom.Point(coord)
+        if self.shape.touches(coord) or self.shape.contains(coord):
+            return 1
+        else:
+            return 0

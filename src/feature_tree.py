@@ -16,17 +16,22 @@ class FeatureTree:
         self.features = list(features)
         self.tree = None
         self.init_tree()
+        self.models = self.tree.models
 
     def init_tree(self):
         '''Initialize the tree from the list of features'''
         # Initialize features as nodes
         # Feature which merge as 'blend' do not need any special node
+        # First pass over "blend" objects, that will be backgrounds
         for feat in self.features[:]:
             if feat.interaction() == "blend":
                 node = BlendNode([feat])
                 self.features.remove(feat)
                 self.features.append(node)
-            else:
+
+        # Second pass for others (Replace and Addition)
+        for feat in self.features[:]:
+            if not isinstance(feat, Node) and feat.interaction() != "blend":
                 background = self.intersecting(feat, self.features)
                 node = None
                 
@@ -34,7 +39,7 @@ class FeatureTree:
                     node = ReplaceNode(background, feat)
                 elif feat.interaction() == "addition":
                     node = AdditionNode(background, feat)
-                
+                    
                 self.features.remove(background)
                 if(feat != background):
                     self.features.remove(feat)
@@ -57,19 +62,26 @@ class FeatureTree:
 
         # Finally, set the disjoint trees as one unique tree
         self.tree = BlendNode(trees)
+        self.models = self.tree.models
             
     def intersecting(self, node, node_list):
         """Returuns one node in the list that is intersecting the *node*. If none exists, returns the node."""
         for n in node_list:
             if n == node:
                 continue
-            if node.intersect(n):
+            if isinstance(n, Node) and node.intersect(n):
                 return n
                 
         return node
 
     def fusion_tree(self, a, b):
-        if isinstance(a, ReplaceNode) or isinstance(a, AdditionNode):
+        if isinstance(a, ReplaceNode):
+            a.add_child(b)
+            return a
+        elif isinstance(b, ReplaceNode):
+            b.add_child(a)
+            return b
+        elif isinstance(a, AdditionNode):
             a.add_child(b)
             return a
         else:
@@ -91,12 +103,14 @@ class Node(Feature):
         super(Node, self).__init__()
         
         self.children = []
+        self.models = []
         for child in children:
             self.add_child(child)
 
     def add_child(self, child):
         self.children.append(child)
         self.shape = self.shape.union(child.shape)
+        self.models += child.models
 
     def z(self, pos):
         '''Height at a given position'''
@@ -111,18 +125,18 @@ class BlendNode(Node):
     '''Node that blends its children'''
     def z(self, pos):
         w = [c.influence(pos) for c in self.children if c.influence(pos) > 0]
+        
         if len(pos) == 0 or len(w) == 0:
             return 0
         else:
             return numpy.average([c.z(pos) for c in self.children if c.influence(pos) > 0],
                                  weights=w)
-        
+
     def influence(self, pos):
         if len(self.children) == 0:
-            return 1
+            return 0
         else:
             return numpy.sum(c.influence(pos) for c in self.children)
-
 
 
 class ReplaceNode(Node):
@@ -135,6 +149,12 @@ class ReplaceNode(Node):
         self.foreground = foreground
         self.shape = background.shape
         self.shape = self.shape.union(foreground.shape)
+        self.models = self.foreground.models
+        # For models in background: keep only those which are not in the foreground
+        for model in self.background.models:
+            pos = model.pos
+            if self.foreground.influence(pos) == 0:
+                self.models.append(model)
 
     def z(self, pos):
         alpha = self.foreground.influence(pos)
@@ -144,12 +164,23 @@ class ReplaceNode(Node):
             return (1 - alpha) * self.background.z(pos) + alpha * self.foreground.z(pos)
 
     def influence(self, pos):
-        return self.background.influence(pos)
+        bg = self.background.influence(pos)
+        if bg != 0:
+            return bg
+        else:
+            return self.foreground.influence(pos)
 
     def add_child(self, node):
         self.background.add_child(node)
         self.shape = self.background.shape
         self.shape = self.shape.union(self.foreground.shape)
+        self.models = []
+        self.models += self.foreground.models
+        # For models in background: keep only those which are not in the foreground
+        for model in self.background.models:
+            pos = model.pos
+            if self.foreground.influence(pos) == 0:
+                self.models.append(model)
 
 
 class AdditionNode(Node):
@@ -162,6 +193,8 @@ class AdditionNode(Node):
         self.foreground = foreground
         self.shape = background.shape
         self.shape = self.shape.union(foreground.shape)
+        self.models = self.background.models
+        self.models += self.foreground.models
 
     def z(self, pos):
         alpha = self.foreground.influence(pos)
@@ -171,9 +204,16 @@ class AdditionNode(Node):
             return self.background.z(pos) + alpha * self.foreground.z(pos)
 
     def influence(self, pos):
-        return self.background.influence(pos)
+        bg = self.background.influence(pos)
+        if bg != 0:
+            return bg
+        else:
+            return self.foreground.influence(pos)
 
     def add_child(self, node):
         self.background.add_child(node)
         self.shape = self.background.shape
         self.shape = self.shape.union(self.foreground.shape)
+        self.models = []
+        self.models += self.background.models
+        self.models += self.foreground.models

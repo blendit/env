@@ -58,3 +58,9 @@ target/
 
 # file ending with ~
 *~
+
+# Pngs at the root
+*.png
+
+# allow Pngs in tests
+!tests/img/*.png
