@@ -5,7 +5,7 @@ from src.feature_tree import BlendNode, ReplaceNode, AdditionNode, FeatureTree
 from src.height_map import HeightMap
 from src.feature import Feature
 
-from tests.base import FeatureTest, FeatureTestReplace, FeatureTestAddition, 
+from tests.base import FeatureTest, FeatureTestReplace, FeatureTestAddition
 
 
 class TestClassesNodes(unittest.TestCase):
