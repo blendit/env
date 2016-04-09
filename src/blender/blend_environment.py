@@ -43,7 +43,7 @@ class BlendEnvironment(Environment):
             
             bpy.ops.object.modifier_add(type='DISPLACE')
             ob.modifiers["Displace"].texture = bpy.data.textures[image]
-            ob.modifiers["Displace"].strength = 0.2
+            ob.modifiers["Displace"].strength = 0.5
             ob.modifiers["Displace"].texture_coords = 'UV'
             bpy.ops.object.modifier_add(type='SUBSURF')
         

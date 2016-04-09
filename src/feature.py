@@ -70,7 +70,7 @@ class ImageFeature(Feature):
         # Ignore PIL warnings
         warnings.simplefilter("ignore", ResourceWarning)
 
-        im = Image.open(image_path)
+        im = Image.open(image_path).convert('L')
         pixels = list(im.getdata())
         width, height = im.size
         self.pixels = [pixels[i * width:(i + 1) * width] for i in range(height)]
@@ -82,8 +82,7 @@ class ImageFeature(Feature):
         coord = geom.Point(coord)
         
         if self.shape.touches(coord) or self.shape.contains(coord):
-            r, g, b = self.pixels[int(y)][int(x)]
-            return 0.2989 * r + 0.5870 * g + 0.1140 * b
+            return self.pixels[int(y)][int(x)]
         else:
             return 0
 
