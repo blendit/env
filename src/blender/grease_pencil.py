@@ -80,10 +80,11 @@ def dist(a, b):
 def gen_feature(feature_name, shape):
     print("Called gen_feature @ %s" % feature_name)
     if(feature_name == "Mountain"):
-        p = Polygon(shape)
+        p = Polygon(list(map(lambda x: (10*x[0], 10*x[1]), shape)))
         center_z = 0
         center_pos = p.centroid.coords[0]
         rd = max([dist(x, center_pos) for x in p.exterior.coords])
+        print("Radius = %d" % rd)
         return Mountain(rd, center_z, center_pos)
     elif(feature_name == "Roads"):
         pass
