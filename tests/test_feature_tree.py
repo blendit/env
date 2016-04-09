@@ -1,6 +1,8 @@
 import unittest
 import shapely.geometry as geom
+from src.landscape import Mountain, Road, RoadNetwork, Vegetation
 from src.feature_tree import BlendNode, ReplaceNode, AdditionNode, FeatureTree
+from src.height_map import HeightMap
 from src.feature import Feature
 
 from tests.base import FeatureTest, FeatureTestReplace, FeatureTestAddition
@@ -96,3 +98,13 @@ class TestClassFeatureTree(unittest.TestCase):
         self.assertEqual(tree3.z((0.5, 0.5)), (1 + 10) / 2)
         self.assertEqual(tree3.z((1.2, 1.2)), 10)
         self.assertAlmostEqual(tree3.z((0.78, 0.75)), 0.8 * 1000 + ((1 + 10) / 2))
+
+    def test_mountain(self):
+        m2 = Mountain(10**4, 0, (50, 50))
+        t = FeatureTree([m2])
+        for x in range(100):
+            for y in range(100):
+                print(t.z((x, y)), end="")
+            print()
+        u = HeightMap(100, 100, t.z)
+        u.export("mountain_as_ft.png")
