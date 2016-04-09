@@ -1,5 +1,5 @@
 from PIL import Image
-import numpy
+import numpy as np
 
 
 class HeightMap:
@@ -13,22 +13,25 @@ class HeightMap:
         """We can pass another function to z_func to initialize directly to z_func((x,y))"""
         self.size_x = sx
         self.size_y = sy
-        self.hmap = [[z_func((x, y)) for x in range(sx)] for y in range(sy)]
+
+        new_z = lambda x,y: z_func((x,y))
+        new_z = np.vectorize(new_z)
+        self.hmap = np.fromfunction(new_z, (sx, sy))
 
         # Resize too large points (threshold)
         for x in range(sx):
             for y in range(sy):
-                if self.hmap[y][x] > max_val:
-                    self.hmap[y][x] = max_val
+                if self.hmap[x,y] > max_val:
+                    self.hmap[x,y] = max_val
 
     def __getitem__(self, index):
         return self.hmap[index]
 
     def __eq__(self, other):
-        return (self.size_x == other.size_x) and (self.size_y == other.size_y) and (self.hmap == other.hmap)
+        return (self.size_x == other.size_x) and (self.size_y == other.size_y) and (self.hmap.all() == other.hmap.all())
 
     def change_res(self, res):
-        new_h = [[self.hmap[y // res][x // res] for x in range(res * self.size_x)] for y in range(res * self.size_y)]
+        new_h = np.array([[self.hmap[x // res, y // res] for x in range(res * self.size_x)] for y in range(res * self.size_y)])
         self.size_x *= res
         self.size_y *= res
         self.hmap = new_h
@@ -36,6 +39,6 @@ class HeightMap:
     def export(self, path, res=1):
         if(res > 1):
             self.change_res(res)
-        im = Image.fromarray(numpy.uint8(self.hmap), "L")
-        # "L" specifies 8-bit grayscale integer
+        
+        im = Image.fromarray(np.uint8(self.hmap), "L")  # "L" specifies 8-bit grayscale integer
         im.save(path)

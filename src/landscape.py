@@ -133,7 +133,7 @@ class Vegetation(Feature):
            or y < 0 or y > (len(self.influence_map[0]) - 1):
             return 0
         else:
-            return self.influence_map[x][y]
+            return self.influence_map[int(x)][int(y)]
 
     def interaction(self):
         return "addition"
