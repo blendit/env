@@ -13,7 +13,12 @@ import shapely.geometry as geom
 class TestMountain(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestMountain, self).__init__(*args, **kwargs)
-        self.m1 = Mountain(1, 0)
+        self.m1 = Mountain(10, 0)
+
+    def test_gen_img(self):
+        m2 = Mountain(10000, 0, (50, 50))
+        hm = HeightMap(100, 100, m2.z)
+        hm.export("mountain_test.png")
 
     def test_z(self):
         z = self.m1.z((0, 0))
