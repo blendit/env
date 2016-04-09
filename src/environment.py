@@ -11,8 +11,7 @@ class Environment:
         self.heightmap_init = False
 
     def init_heightmap(self, res_x, res_y):
-        self.heightmap = HeightMap(res_x, res_y)
-        # , self.tree)
+        self.heightmap = HeightMap(res_x, res_y, self.tree.z)
         self.heightmap_init = True
 
     def export_heightmap(self, filename, res_x=500, res_y=500):

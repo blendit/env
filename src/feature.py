@@ -20,11 +20,11 @@ class Feature():
 
     def z(self, coord):
         """Export the heightmap given a feature and a plane coordinate"""
-        pass
+        return 0
 
     def influence(self, coord):
         """Export influence heightmap"""
-        pass
+        return 0
 
     def interaction(self):
         """Give the interaction type of the feature with other features.

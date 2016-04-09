@@ -100,22 +100,29 @@ class Node(Feature):
 
     def z(self, pos):
         '''Height at a given position'''
-        pass
+        return 0
 
     def influence(self, pos):
         '''Influence of at a given position'''
-        pass
+        return 0
 
 
 class BlendNode(Node):
     '''Node that blends its children'''
-
     def z(self, pos):
-        return numpy.average([c.z(pos) for c in self.children if c.influence(pos) > 0],
-                             weights=[c.influence(pos) for c in self.children if c.influence(pos) > 0])
-
+        w = [c.influence(pos) for c in self.children if c.influence(pos) > 0]
+        if len(pos) == 0 or len(w) == 0:
+            return 0
+        else:
+            return numpy.average([c.z(pos) for c in self.children if c.influence(pos) > 0],
+                                 weights=w)
+        
     def influence(self, pos):
-        return numpy.sum(c.influence(pos) for c in self.children)
+        if len(self.children) == 0:
+            return 1
+        else:
+            return numpy.sum(c.influence(pos) for c in self.children)
+
 
 
 class ReplaceNode(Node):

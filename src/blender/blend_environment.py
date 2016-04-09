@@ -53,7 +53,9 @@ class BlendEnvironment(Environment):
         f = open(pickle_path, 'rb')
         env = pickle.load(f)
         f.close()
+        self.export_image(env, res)
 
+    def export_img(self, env, res):
         image = "/tmp/env" + str(int(time.time())) + ".png"
         env.export_heightmap(image)
         self.create_terrain(image, res)
