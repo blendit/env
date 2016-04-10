@@ -62,6 +62,7 @@ from PIL import Image
 import os
 from random import choice
 
+
 class MountainImg(Landscape):
     """A mountain extracted from heightmaps"""
 
@@ -75,8 +76,8 @@ class MountainImg(Landscape):
         # By default, buffer approximates the circle with a regular 16-gon
         self.shape = center.buffer(radius)
         self.img = Image.open("../../models/mountains/" + random.choice(os.listdir("../../models/mountains/")))
-        while(max(self.img.size[0], self.img.size[1]) < 2*radius):
-            print("(MountainImg) Image to small, (want %d) trying something else" % (2*radius))
+        while(max(self.img.size[0], self.img.size[1]) < 2 * radius):
+            print("(MountainImg) Image to small, (want %d) trying something else" % (2 * radius))
             self.img = Image.open("../../models/mountains/" + choice(os.listdir("../../models/mountains/")))
         self.img_center_x = random.randint(self.radius, self.img.size[0] - self.radius)
         self.img_center_y = random.randint(self.radius, self.img.size[1] - self.radius)
@@ -96,7 +97,6 @@ class MountainImg(Landscape):
         self.mini = mini
         print("A MountainImg, of parameters %d and %d, %d, mode %s, div %s" % (radius, center_pos[0], center_pos[1], self.img.mode, self.div))
 
-        
     def z(self, coord):
         """Generation of a height given a plane coordinate. Formula from [GGP+15], subsection 4.1"""
         x = coord[0] - self.center_pos[0]
@@ -113,7 +113,6 @@ class MountainImg(Landscape):
         else:
             return 0
 
-        
 
 class Road(FeatureLine):
     """A single road"""

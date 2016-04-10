@@ -30,7 +30,6 @@ class BlendEnvironment(Environment):
         # Resize
         bpy.ops.transform.resize(value=(self.resize, self.resize, self.resize), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
-
         # Subdivide
         bpy.ops.object.editmode_toggle()
         bpy.ops.mesh.subdivide(number_cuts=maxi, smoothness=0)
