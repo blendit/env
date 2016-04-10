@@ -80,19 +80,18 @@ def change_color(i):
 def dist(a, b):
     return (a[0] - b[0])**2 + (a[1] - b[1])**2
 
-def gen_feature(feature_name, shape):
+
+def gen_feature(feature_name, shape, transl):
     print("Called gen_feature @ %s" % feature_name)
     # let's first translate our feature.
-    #ip = Polygon(list(map(lambda x: (4 * x[0], 4 * x[1]), shape)))
-    #bounding_box = ip.bounds
-    #p = translate(ipe, xoff=bounding_box[0], yoff=bounding_box[1])
+    ip = Polygon(list(shape))  # map(lambda x: (x[0], 4x[1]), shape)))
+    p = translate(ip, xoff=transl[0], yoff=transl[1])
     if(feature_name == "Mountain"):
-        p = Polygon(list(map(lambda x: (4 * x[0], 4 * x[1]), shape)))
         center_z = 0
         center_pos = p.centroid.coords[0]
-        rd = max([dist(x, center_pos) for x in p.exterior.coords]) // 10
-#        print("Radius = %d" % rd)
-#        print("Center = %d, %d" % (center_pos[0], center_pos[1]))
+        rd = max([dist(x, center_pos) for x in p.exterior.coords]) // 50
+        print("Radius = %d" % rd)
+        print("Center = %d, %d" % (center_pos[0], center_pos[1]))
         return Mountain(rd, center_z, center_pos)
     elif(feature_name == "Roads"):
         pass
@@ -143,8 +142,9 @@ class OBJECT_OT2_ToolsButton(bpy.types.Operator):
         # We add this new feature
         # We should translate everything, here or when exporting the env
         # Idea : find bounding box, and translate 2 times...
-        shape_2d = [(p.co.x, p.co.y) for p in bpy.data.grease_pencil[0].layers[scn["i"]].active_frame.strokes[0].points]
-        feature_list.append(gen_feature(scn["myItems"][scn["MyEnum"]][0], shape_2d))
+        # shape_2d = [(p.co.x, p.co.y) for p in bpy.data.grease_pencil[0].layers[scn["i"]].active_frame.strokes[0].points]
+        # feature_list.append(gen_feature(scn["myItems"][scn["MyEnum"]][0], shape_2d))
+        feature_list.append(scn["myItems"][scn["MyEnum"]][0])
         scn["i"] += 1
         bpy.ops.gpencil.layer_add()
         return {'FINISHED'}
@@ -166,12 +166,30 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
     def execute(self, context):
         scn = context.scene
         bpy.ops.view3d.viewnumpad(type='CAMERA', align_active=False)
-        env = Environment(feature_list)
+        shapes = [[(10 * p.co.x, 10 * p.co.y) for p in bpy.data.grease_pencil[0].layers[i].active_frame.strokes[0].points] for i in range(scn["i"])]
+        bb = bounds(shapes[0])
+        for shape in shapes[1:]:
+            s = bounds(shape)
+            bb = (min(bb[0], s[0]), min(bb[1], s[1]), max(bb[2], s[2]), max(bb[3], s[3]))
+        my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1])) for i in range(len(shapes))]
+        # print("Res x %d; res y %d" % ((bb[2] - bb[0]), (bb[3] - bb[1])))
+        env = Environment(my_features, x=1 + int(bb[2] - bb[0]), y=1 + int(bb[3] - bb[1]))
         benv = BlendEnvironment()
         benv.export_img(env, 2)
         return {'FINISHED'}
 
+
+def bounds(point_list):
+    min_x, min_y = point_list[0]
+    max_x, max_y = point_list[0]
+    for p in point_list[1:]:
+        min_x = min(min_x, p[0])
+        max_x = max(max_x, p[0])
+        min_y = min(min_y, p[1])
+        max_y = max(max_y, p[1])
+    return (min_x, min_y, max_x, max_y)
     
+
 class FeaturePanel(bpy.types.Panel):
     bl_category = "ENV"
     bl_label = "feature panel"

@@ -57,7 +57,7 @@ class BlendEnvironment(Environment):
         self.export_img(env, res)
 
     def export_img(self, env, res):
-        image = "/tmp/env%s.png" % time.strftime("%d.%Hh%Mm%Ss")
+        image = "/tmp/env%s.png" % time.strftime("%d_%Hh%Mm%Ss")
         env.export_heightmap(image)
         self.create_terrain(image, res)
 

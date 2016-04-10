@@ -5,9 +5,9 @@ from src.height_map import HeightMap
 class Environment:
     """Environment class"""
 
-    def __init__(self, features):
-        self.res_x = 200
-        self.res_y = 200
+    def __init__(self, features, x=200, y=200):
+        self.res_x = x
+        self.res_y = y
         
         self.tree = FeatureTree(features)
         self.models = self.tree.models

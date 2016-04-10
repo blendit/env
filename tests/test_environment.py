@@ -8,6 +8,9 @@ from src.height_map import HeightMap
 from src.landscape import Vegetation
 from src.environment import Environment
 
+from tests.base import compare_imgs
+from src.landscape import Mountain
+
 
 class TestClassEnvironment(unittest.TestCase):
     def setUp(self):
@@ -30,13 +33,9 @@ class TestClassEnvironment(unittest.TestCase):
 
         self.env.export_heightmap("temp_env.png", 50, 50)
 
-        
-from tests.base import compare_imgs
-from src.landscape import Mountain
-        
+
 class TestImageEnvironment(unittest.TestCase):
     def test_mountain(self):
         m2 = Mountain(10**3, 0, (50, 50))
         t = Environment([m2])
         t.export_heightmap("mountain_as_env.png", res_x=100, res_y=100)
-
