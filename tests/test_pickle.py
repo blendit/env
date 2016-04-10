@@ -39,6 +39,8 @@ class TestPickle(unittest.TestCase):
         v1.models.append(Model((5, 5), gen_model))
         v1.models.append(Model((195, 195), gen_model))
 
+        print("mountains")
+
         env = Environment([mount, v1])
         env.init_heightmap(200, 200)
         

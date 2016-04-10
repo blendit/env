@@ -16,11 +16,12 @@ class HeightMap:
         self.size_x = sx
         self.size_y = sy
 
-        new_z = lambda x,y: z_func((x,y))
+        def new_z(x, y):
+            return z_func((x, y))
         new_z = np.vectorize(new_z)
 
         time1 = time.time()
-        new_z(50,50)
+        new_z(50, 50)
         time2 = time.time()
         print(time2 - time1)
         
@@ -31,8 +32,8 @@ class HeightMap:
         # Resize too large points (threshold)
         for x in range(sx):
             for y in range(sy):
-                if self.hmap[y,x] > max_val:
-                    self.hmap[y,x] = max_val
+                if self.hmap[y, x] > max_val:
+                    self.hmap[y, x] = max_val
 
     def __getitem__(self, index):
         return self.hmap[index]
