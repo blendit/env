@@ -19,7 +19,7 @@ sys.path += (paths)
 
 from src.blender.blend_environment import BlendEnvironment
 from src.environment import Environment
-from src.landscape import Mountain
+from src.landscape import Mountain, MountainImg
 
 # how to deal with this ? pencil.layers[0] = GP_Layer.001, ..., pencil.layers[n-1] = GP_Layer.00n, pencil.layers[n] = GP_Layer... (but GP Layer first one)
 # nb, can change gen_name(i) in id ? maybe not...
@@ -34,6 +34,7 @@ def upd_enum(self, context):
 
 def initSceneProperties(scn):
     myItems = [('Mountain', 'Mountain', 'Mountain'),
+               ('MountainImg', 'MountainImg', 'MountainImg'),
                ('Vegetation', 'Vegetation', 'Vegetation'),
                ('Urban', 'Urban', 'Urban'),
                ('Water', 'Water', 'Water')]
@@ -89,10 +90,17 @@ def gen_feature(feature_name, shape, transl):
     if(feature_name == "Mountain"):
         center_z = 0
         center_pos = p.centroid.coords[0]
-        rd = max([dist(x, center_pos) for x in p.exterior.coords]) // 50
+        rd = int((max([dist(x, center_pos) for x in p.exterior.coords]) / 2) ** 0.5)
         print("Radius = %d" % rd)
         print("Center = %d, %d" % (center_pos[0], center_pos[1]))
         return Mountain(rd, center_z, center_pos)
+    if(feature_name == "MountainImg"):
+        center_z = 0
+        center_pos = p.centroid.coords[0]
+        rd = int((max([dist(x, center_pos) for x in p.exterior.coords]) / 2) ** 0.5)
+        print("Radius = %d" % rd)
+        print("Center = %d, %d" % (center_pos[0], center_pos[1]))
+        return MountainImg(rd, center_z, center_pos)
     elif(feature_name == "Roads"):
         pass
     elif(feature_name == "Vegetation"):
@@ -116,8 +124,9 @@ class ToolsPanel(bpy.types.Panel):
         scn = context.scene
         layout.operator("drawenv.execute")
         layout.operator("drawenv.stop")
-        layout.operator("drawenv.print")
         layout.operator("drawenv.gen")
+        layout.operator("drawenv.print")
+        layout.operator("drawenv.hide")
 
 
 class OBJECT_OT_ToolsButton(bpy.types.Operator):
@@ -158,6 +167,17 @@ class OBJECT_OT3_ToolsButton(bpy.types.Operator):
         print_points()
         return {'FINISHED'}
 
+    
+class OBJECT_OT4_ToolsButton(bpy.types.Operator):
+    bl_idname = "drawenv.hide"
+    bl_label = "Hide/unhide gpencil"
+
+    def execute(self, context):
+        scn = context.scene
+        for i in range(scn["i"]):
+            bpy.data.grease_pencil[0].layers[i].hide = not bpy.data.grease_pencil["GPencil"].layers[i].hide
+        return {'FINISHED'}
+
 
 class OBJECT_OT4_ToolsButton(bpy.types.Operator):
     bl_idname = "drawenv.gen"
@@ -166,7 +186,8 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
     def execute(self, context):
         scn = context.scene
         bpy.ops.view3d.viewnumpad(type='CAMERA', align_active=False)
-        shapes = [[(10 * p.co.x, 10 * p.co.y) for p in bpy.data.grease_pencil[0].layers[i].active_frame.strokes[0].points] for i in range(scn["i"])]
+        scaling = 5
+        shapes = [[(scaling * p.co.x, scaling * p.co.y) for p in bpy.data.grease_pencil[0].layers[i].active_frame.strokes[0].points] for i in range(scn["i"])]
         bb = bounds(shapes[0])
         for shape in shapes[1:]:
             s = bounds(shape)
@@ -174,7 +195,7 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
         my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1])) for i in range(len(shapes))]
         # print("Res x %d; res y %d" % ((bb[2] - bb[0]), (bb[3] - bb[1])))
         env = Environment(my_features, x=1 + int(bb[2] - bb[0]), y=1 + int(bb[3] - bb[1]))
-        benv = BlendEnvironment()
+        benv = BlendEnvironment(resize=max(bb[2] - bb[0], bb[3] - bb[1]) // (2 * scaling), translation=False)
         benv.export_img(env, 2)
         return {'FINISHED'}
 

@@ -9,8 +9,10 @@ from src.environment import Environment
 class BlendEnvironment(Environment):
     """Link between environment and blender"""
 
-    def __init__(self):
+    def __init__(self, resize=14, translation=True):
         self.models = []
+        self.resize = resize
+        self.translation = translation
 
     def create_terrain(self, image_path, res):
         image_dir, image_name = os.path.split(image_path)
@@ -23,9 +25,11 @@ class BlendEnvironment(Environment):
         bpy.ops.object.delete(use_global=False)
         bpy.ops.mesh.primitive_plane_add(radius=1, view_align=False, enter_editmode=False, location=(0, 0, 0), layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
 
+        if(self.translation):
+            bpy.ops.transform.translate(value=(0, 0, 3.5), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
         # Resize
-        bpy.ops.transform.resize(value=(14, 14, 14), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
-        bpy.ops.transform.translate(value=(0, 0, 3.5), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        bpy.ops.transform.resize(value=(self.resize, self.resize, self.resize), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+
 
         # Subdivide
         bpy.ops.object.editmode_toggle()
