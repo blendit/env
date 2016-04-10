@@ -56,6 +56,11 @@ class BlendEnvironment(Environment):
         f.close()
         self.export_img(env, res)
 
+    def export_img(self, env, res):
+        image = "/tmp/env%s.png" % time.strftime("%d.%Hh%Mm%Ss")
+        env.export_heightmap(image)
+        self.create_terrain(image, res)
+
         # Import models
         for model in env.models:
             bpy.ops.import_scene.obj(filepath=model.model.path, axis_forward='-Z', axis_up='Y')
@@ -67,16 +72,11 @@ class BlendEnvironment(Environment):
             bpy.ops.transform.translate(value=(-14, 14, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
             x, y, z = model.pos3D
-            x *= 28 / env.res_x
-            y *= -28 / env.res_y
-            z *= 7 / 255
+            x = x * 28 / env.res_x
+            y = y * -28 / env.res_y
+            z = z * 7 / 255
             bpy.ops.transform.translate(value=(x, y, z), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
-        
-    def export_img(self, env, res):
-        image = "/tmp/env%s.png" % time.strftime("%d.%Hh%Mm%Ss")
-        env.export_heightmap(image)
-        self.create_terrain(image, res)
-        
+
     def render(self, final_result):
         bpy.context.scene.render.filepath = final_result
         bpy.context.scene.render.resolution_x = 1920
