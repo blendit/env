@@ -20,6 +20,9 @@ class Environment:
         
         self.heightmap_init = False
 
+    # def translate_hm(self, coords):
+    #     return self.tree.z((coords[0] + self.res_x // 2, coords[1] + self.res_y // 2))
+        
     def init_heightmap(self, res_x, res_y):
         self.res_x = res_x
         self.res_y = res_y

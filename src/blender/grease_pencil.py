@@ -5,12 +5,13 @@ import subprocess
 import ast
 import random
 from shapely.geometry import Polygon
+from shapely.affinity import translate
 
 script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(script_dir)
 
 # Get system's python path
-proc = subprocess.Popen('python3 path.py', stdout=subprocess.PIPE, shell=True)
+proc = subprocess.Popen('python3 -c "import sys; print(sys.path)"', stdout=subprocess.PIPE, shell=True)
 out, err = proc.communicate()
 paths = ast.literal_eval(out.decode("utf-8"))
 sys.path += (paths)
@@ -79,9 +80,12 @@ def change_color(i):
 def dist(a, b):
     return (a[0] - b[0])**2 + (a[1] - b[1])**2
 
-
 def gen_feature(feature_name, shape):
     print("Called gen_feature @ %s" % feature_name)
+    # let's first translate our feature.
+    #ip = Polygon(list(map(lambda x: (4 * x[0], 4 * x[1]), shape)))
+    #bounding_box = ip.bounds
+    #p = translate(ipe, xoff=bounding_box[0], yoff=bounding_box[1])
     if(feature_name == "Mountain"):
         p = Polygon(list(map(lambda x: (4 * x[0], 4 * x[1]), shape)))
         center_z = 0
@@ -135,14 +139,14 @@ class OBJECT_OT2_ToolsButton(bpy.types.Operator):
 
     def execute(self, context):
         scn = context.scene
-        scn["i"] += 1
-        bpy.ops.gpencil.layer_add()
         self.report({'INFO'}, "stopping drawing")
         # We add this new feature
         # We should translate everything, here or when exporting the env
         # Idea : find bounding box, and translate 2 times...
-        shape_2d = [(p.co.x, p.co.y) for p in bpy.data.grease_pencil[0].layers[0].active_frame.strokes[0].points]
+        shape_2d = [(p.co.x, p.co.y) for p in bpy.data.grease_pencil[0].layers[scn["i"]].active_frame.strokes[0].points]
         feature_list.append(gen_feature(scn["myItems"][scn["MyEnum"]][0], shape_2d))
+        scn["i"] += 1
+        bpy.ops.gpencil.layer_add()
         return {'FINISHED'}
 
 
