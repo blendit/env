@@ -33,7 +33,8 @@ class Mountain(Landscape):
         self.shape = center.buffer(radius)
         self.freqs = freqs
         self.amplis = amplis
-
+        print("A Mountain, of parameters %d and %d, %d" % (radius, center_pos[0], center_pos[1]))
+        
     def default_noise(self, coord):
         try:
             return self.default_noise_grid[int(coord[0]), int(coord[1])]

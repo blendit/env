@@ -103,4 +103,4 @@ class TestClassFeatureTree(unittest.TestCase):
         m2 = Mountain(10**4, 0, (50, 50))
         t = FeatureTree([m2])
         u = HeightMap(100, 100, t.z)
-        # u.export("mountain_as_ft.png")
+        u.export("mountain_as_ft.png")

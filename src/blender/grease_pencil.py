@@ -86,9 +86,9 @@ def gen_feature(feature_name, shape):
         p = Polygon(list(map(lambda x: (4 * x[0], 4 * x[1]), shape)))
         center_z = 0
         center_pos = p.centroid.coords[0]
-        rd = max([dist(x, center_pos) for x in p.exterior.coords])
-        print("Radius = %d" % rd)
-        print("Center = %d, %d" % (center_pos[0], center_pos[1]))
+        rd = max([dist(x, center_pos) for x in p.exterior.coords]) // 10
+#        print("Radius = %d" % rd)
+#        print("Center = %d, %d" % (center_pos[0], center_pos[1]))
         return Mountain(rd, center_z, center_pos)
     elif(feature_name == "Roads"):
         pass
@@ -139,6 +139,8 @@ class OBJECT_OT2_ToolsButton(bpy.types.Operator):
         bpy.ops.gpencil.layer_add()
         self.report({'INFO'}, "stopping drawing")
         # We add this new feature
+        # We should translate everything, here or when exporting the env
+        # Idea : find bounding box, and translate 2 times...
         shape_2d = [(p.co.x, p.co.y) for p in bpy.data.grease_pencil[0].layers[0].active_frame.strokes[0].points]
         feature_list.append(gen_feature(scn["myItems"][scn["MyEnum"]][0], shape_2d))
         return {'FINISHED'}
