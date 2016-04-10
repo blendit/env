@@ -10,6 +10,7 @@ import sys
 import subprocess
 import ast
 
+
 script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(script_dir)
 
@@ -22,10 +23,13 @@ sys.path += (paths)
 
 from src.blender.blend_environment import BlendEnvironment
 
+global_env = BlendEnvironment()
+
 
 def initSceneProperties(scn):
     bpy.types.Scene.res = bpy.props.IntProperty(name="Resolution", default=1, min=1, max=10)
     scn["res"] = 1
+    
     bpy.types.Scene.path = bpy.props.StringProperty(
         name="Heightmap",
         description="Path to Directory",
@@ -33,6 +37,7 @@ def initSceneProperties(scn):
         maxlen=1024,
         subtype='FILE_PATH')
     scn["path"] = script_dir + "/mt-ruapehu-and-mt-ngauruhoe.png"
+    
     bpy.types.Scene.pickle_path = bpy.props.StringProperty(
         name="Environment file",
         description="Path to Directory",
@@ -40,6 +45,9 @@ def initSceneProperties(scn):
         maxlen=1024,
         subtype='FILE_PATH')
     scn["pickle_path"] = script_dir + "/test.p"
+
+    bpy.types.Scene.models_scale = bpy.props.FloatProperty(name="Models scale", default=1, min=0.00001, max=10, update=update_scale)
+    scn["models_scale"] = 1
 
     return
 
@@ -52,11 +60,15 @@ class EnvPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         scn = context.scene
+        
         layout.prop(scn, 'res')
         layout.prop(scn, 'path')
         layout.operator("env.interface")
         layout.prop(scn, 'pickle_path')
         layout.operator("env.pickle_interface")
+
+        size = layout.row(align=True)
+        size.prop(scn, 'models_scale')
 
 
 class EnvInterface(bpy.types.Operator):
@@ -66,10 +78,11 @@ class EnvInterface(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+        global global_env
         scn = bpy.context.scene
         self.report({'INFO'}, "env.interface :\n  Resolution : %d\n  Path (HeightMap) : %s" % (scn["res"], scn["path"]))
-        a = BlendEnvironment()
-        a.create_terrain(scn["path"], scn["res"])
+        
+        global_env.create_terrain(scn["path"], scn["res"])
         self.report({'INFO'}, "finished import")
         return {'FINISHED'}
 
@@ -81,14 +94,24 @@ class PickleInterface(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+        global global_env
         scn = bpy.context.scene
         self.report({'INFO'}, "env.interface :\n  Resolution : %d\n  Path (Pickle) : %s" % (scn["res"], scn["pickle_path"]))
-        a = BlendEnvironment()
-        a.import_env(scn["pickle_path"], scn["res"])
+
+        global_env.import_env(scn["pickle_path"], scn["res"])
         self.report({'INFO'}, "finished import")
         return {'FINISHED'}
 
 
+def update_scale(self, context):
+        global global_env
+        for (s, models) in global_env.models:
+            for model in models:
+                model.scale[0] = s * context.scene.models_scale
+                model.scale[1] = s * context.scene.models_scale
+                model.scale[2] = s * context.scene.models_scale
+    
+    
 # def menu_func(self, context):
 #     self.layout.operator(EnvInterface.bl_idname)
 

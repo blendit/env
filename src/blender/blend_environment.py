@@ -10,7 +10,7 @@ class BlendEnvironment(Environment):
     """Link between environment and blender"""
 
     def __init__(self):
-        pass
+        self.models = []
 
     def create_terrain(self, image_path, res):
         image_dir, image_name = os.path.split(image_path)
@@ -54,18 +54,15 @@ class BlendEnvironment(Environment):
         f = open(pickle_path, 'rb')
         env = pickle.load(f)
         f.close()
-        self.export_image(env, res)
-
-    def export_img(self, env, res):
-        image = "/tmp/env%s.png" % time.strftime("%d.%Hh%Mm%Ss")
-        env.export_heightmap(image)
-        self.create_terrain(image, res)
+        self.export_img(env, res)
 
         # Import models
         for model in env.models:
             bpy.ops.import_scene.obj(filepath=model.model.path, axis_forward='-Z', axis_up='Y')
+            
+            self.models.append((model.model.size, bpy.context.selected_objects))
 
-            s = model.model.size
+            s = model.model.size * bpy.context.scene.models_scale
             bpy.ops.transform.resize(value=(s, s, s), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
             bpy.ops.transform.translate(value=(-14, 14, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
@@ -74,6 +71,11 @@ class BlendEnvironment(Environment):
             y *= -28 / env.res_y
             z *= 7 / 255
             bpy.ops.transform.translate(value=(x, y, z), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        
+    def export_img(self, env, res):
+        image = "/tmp/env%s.png" % time.strftime("%d.%Hh%Mm%Ss")
+        env.export_heightmap(image)
+        self.create_terrain(image, res)
         
     def render(self, final_result):
         bpy.context.scene.render.filepath = final_result
