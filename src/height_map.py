@@ -1,8 +1,6 @@
 from PIL import Image
 import numpy as np
 
-import time
-
 
 class HeightMap:
     """Height map structure. This is just a 2D array containing z-values"""
@@ -20,10 +18,7 @@ class HeightMap:
             return z_func((x, y))
         new_z = np.vectorize(new_z)
 
-        time1 = time.time()
         new_z(50, 50)
-        time2 = time.time()
-        print(time2 - time1)
         
         self.hmap = new_z(*np.meshgrid(np.arange(0, sx),
                                        np.arange(0, sy),
