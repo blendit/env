@@ -1,5 +1,7 @@
 import pickle
 import unittest
+import shapely.geometry as geom
+
 from src.feature import Feature, ImageFeature
 from src.height_map import HeightMap
 from src.environment import Environment
@@ -35,7 +37,7 @@ class TestPickle(unittest.TestCase):
         mount = ImageFeature("tests/img/mount_200.png")
         
         gen_model = AbstractModel(os.path.abspath(os.path.dirname(sys.argv[0])) + "/tests/models/pine_tree/Pine_4m.obj", 0.01, (0, 0))
-        v1 = Vegetation(gen_model, (20, 20), (180, 180), 10)
+        v1 = Vegetation(geom.box(20, 20, 180, 180), gen_model, 10)
         v1.models.append(Model((5, 5), gen_model))
         v1.models.append(Model((195, 195), gen_model))
 

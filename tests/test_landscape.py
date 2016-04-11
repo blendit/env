@@ -59,7 +59,7 @@ class TestVegetation(unittest.TestCase):
         super().__init__(*args, **kwargs)
         self.gen_model = AbstractModel("test.3ds", 2, (0, 0))
         self.n1 = 100
-        self.v1 = Vegetation(self.gen_model, (20, 20), (100, 100), self.n1)
+        self.v1 = Vegetation(geom.box(20, 20, 100, 100), self.gen_model, self.n1)
 
     def test_shape(self):
         v1 = self.v1

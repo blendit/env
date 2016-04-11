@@ -6,10 +6,13 @@ from tests.base import FeatureTest, FeatureTestReplace
 from src.feature_tree import FeatureTree
 from src.height_map import HeightMap
 from src.landscape import Vegetation
+from src.model import AbstractModel
 from src.environment import Environment
 
 from tests.base import compare_imgs
 from src.landscape import Mountain
+
+import shapely.geometry as geom
 
 
 class TestClassEnvironment(unittest.TestCase):
@@ -23,7 +26,7 @@ class TestClassEnvironment(unittest.TestCase):
         self.rep = FeatureTestReplace(0, influence="notall", val_influence=1)
         self.rep.shape = geom.box(10, 10, 30, 30)
         
-        self.forest = Vegetation(pos=(5, 5), size=(40, 40), tree_number=50)
+        self.forest = Vegetation(geom.box(5, 5, 45, 45), model=AbstractModel(), tree_number=50)
 
         self.env = Environment([self.rep, self.up, self.background, self.forest])
         
