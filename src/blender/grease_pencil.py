@@ -19,7 +19,8 @@ from shapely.affinity import translate
 
 from src.blender.blend_environment import BlendEnvironment
 from src.environment import Environment
-from src.landscape import Mountain, MountainImg
+from src.landscape import Mountain, MountainImg, Vegetation
+from src.model import AbstractModel
 
 # how to deal with this ? pencil.layers[0] = GP_Layer.001, ..., pencil.layers[n-1] = GP_Layer.00n, pencil.layers[n] = GP_Layer... (but GP Layer first one)
 # nb, can change gen_name(i) in id ? maybe not...
@@ -45,6 +46,7 @@ def initSceneProperties(scn):
     scn["myItems"] = myItems
     scn['MyEnum'] = 0
     scn["i"] = 0
+    scn["models_scale"] = 1
     return
 
 
@@ -94,7 +96,7 @@ def gen_feature(feature_name, shape, transl):
         print("Radius = %d" % rd)
         print("Center = %d, %d" % (center_pos[0], center_pos[1]))
         return Mountain(rd, center_z, center_pos)
-    if(feature_name == "MountainImg"):
+    elif(feature_name == "MountainImg"):
         center_z = 0
         center_pos = p.centroid.coords[0]
         rd = int((max([dist(x, center_pos) for x in p.exterior.coords]) / 2) ** 0.5)
@@ -104,7 +106,7 @@ def gen_feature(feature_name, shape, transl):
     elif(feature_name == "Roads"):
         pass
     elif(feature_name == "Vegetation"):
-        pass
+        return Vegetation(p, model=AbstractModel("../../models/vegetation/pine_tree/Pine_4m.obj", 0.01, (0, 0)), tree_number=10)
     elif(feature_name == "Urban"):
         pass
     elif(feature_name == "WaterArea"):

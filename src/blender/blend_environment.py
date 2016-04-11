@@ -70,7 +70,7 @@ class BlendEnvironment(Environment):
             
             self.models.append((model.model.size, bpy.context.selected_objects))
 
-            s = model.model.size * bpy.context.scene.models_scale
+            s = model.model.size * bpy.context.scene["models_scale"]
             bpy.ops.transform.resize(value=(s, s, s), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
             bpy.ops.transform.translate(value=(-14, 14, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
