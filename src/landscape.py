@@ -169,8 +169,8 @@ class Vegetation(Feature):
 
         i = 0
         while i < number:
-            x = randrange(minx, maxx)
-            y = randrange(miny, maxy)
+            x = randrange(int(minx), int(maxx))
+            y = randrange(int(miny), int(maxy))
 
             coord = geom.Point((x, y))
             if self.shape.touches(coord) or self.shape.contains(coord):

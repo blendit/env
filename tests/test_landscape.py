@@ -16,7 +16,7 @@ class TestMountain(unittest.TestCase):
         self.m1 = Mountain(10, 0)
 
     def test_gen_img(self):
-        m2 = Mountain(10000, 0, (50, 50))
+        m2 = Mountain(100, 0, (50, 50))
         hm = HeightMap(100, 100, m2.z)
         hm.export("mountain_test.png")
 
