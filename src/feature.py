@@ -1,4 +1,6 @@
 import shapely.geometry as geom
+from PIL import Image
+import warnings
 
 
 class Feature():
@@ -21,11 +23,11 @@ class Feature():
 
     def z(self, coord):
         """Export the heightmap given a feature and a plane coordinate"""
-        pass
+        return 0
 
     def influence(self, coord):
         """Export influence heightmap"""
-        pass
+        return 0
 
     def interaction(self):
         """Give the interaction type of the feature with other features.
@@ -58,3 +60,35 @@ class FeatureLine(Feature):
         * "replace" (default for FeatureLine): one feature erase one other (**only two features**)
         * "addition": add one feature over another (**only two features**)."""
         return "replace"
+
+
+class ImageFeature(Feature):
+    """A basic feature whose z is simply an image"""
+    def __init__(self, image_path):
+        super().__init__()
+
+        # Ignore PIL warnings
+        warnings.simplefilter("ignore", ResourceWarning)
+
+        im = Image.open(image_path).convert('L')
+        pixels = list(im.getdata())
+        width, height = im.size
+        self.pixels = [pixels[i * width:(i + 1) * width] for i in range(height)]
+
+        self.shape = geom.box(0, 0, width, height)
+
+    def z(self, coord):
+        (x, y) = coord
+        coord = geom.Point(coord)
+        
+        if self.shape.touches(coord) or self.shape.contains(coord):
+            return self.pixels[int(y)][int(x)]
+        else:
+            return 0
+
+    def influence(self, coord):
+        coord = geom.Point(coord)
+        if self.shape.touches(coord) or self.shape.contains(coord):
+            return 1
+        else:
+            return 0

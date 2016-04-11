@@ -20,9 +20,9 @@ class TestHeightMap(unittest.TestCase):
         self.assertEqual(self.m2.hmap[1][2], 4)
 
     def test_export(self):
-        self.assertRaises(None, self.m1.export("m1.png"))
-        self.assertRaises(None, self.m2.export("m2.png"))
-        self.assertRaises(None, self.m2.export("m3.png", 2))
+        self.m1.export("m1.png")
+        self.m2.export("m2.png")
+        self.m2.export("m3.png", 2)
 
         compare_imgs("tests/img/m1.png", "m1.png", self)
         compare_imgs("tests/img/m2.png", "m2.png", self)
@@ -55,5 +55,5 @@ class TestHeightMapTree(unittest.TestCase):
         
         heightmap = HeightMap(100, 100, tree.z)
 
-        self.assertRaises(None, heightmap.export("mtree.png"))
+        heightmap.export("mtree.png")
         compare_imgs("tests/img/mtree.png", "mtree.png", self)
