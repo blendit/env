@@ -4,8 +4,6 @@ import sys
 import subprocess
 import ast
 import random
-from shapely.geometry import Polygon
-from shapely.affinity import translate
 
 script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(script_dir)
@@ -16,6 +14,8 @@ out, err = proc.communicate()
 paths = ast.literal_eval(out.decode("utf-8"))
 sys.path += (paths)
 
+from shapely.geometry import Polygon
+from shapely.affinity import translate
 
 from src.blender.blend_environment import BlendEnvironment
 from src.environment import Environment
