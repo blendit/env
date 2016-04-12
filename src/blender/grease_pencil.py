@@ -21,6 +21,7 @@ from src.blender.blend_environment import BlendEnvironment
 from src.environment import Environment
 from src.landscape import Mountain, MountainImg, Vegetation
 from src.model import AbstractModel
+from src.feature import ImageFeature
 
 # how to deal with this ? pencil.layers[0] = GP_Layer.001, ..., pencil.layers[n-1] = GP_Layer.00n, pencil.layers[n] = GP_Layer... (but GP Layer first one)
 # nb, can change gen_name(i) in id ? maybe not...
@@ -37,6 +38,7 @@ def initSceneProperties(scn):
     myItems = [('Mountain', 'Mountain', 'Mountain'),
                ('MountainImg', 'MountainImg', 'MountainImg'),
                ('Vegetation', 'Vegetation', 'Vegetation'),
+               ('Image', 'Image', 'Image'),
                ('Urban', 'Urban', 'Urban'),
                ('Water', 'Water', 'Water')]
     bpy.types.Scene.MyEnum = bpy.props.EnumProperty(
@@ -96,17 +98,26 @@ def gen_feature(feature_name, shape, transl, scaling):
         print("Radius = %d" % rd)
         print("Center = %d, %d" % (center_pos[0], center_pos[1]))
         return Mountain(rd, center_z, center_pos)
+        
     elif(feature_name == "MountainImg"):
         center_z = 0
         center_pos = p.bounds[0:2]
         print("Center = %d, %d" % (center_pos[0], center_pos[1]))
         return MountainImg(p, center=center_pos)
+        
     elif(feature_name == "Roads"):
         pass
+        
+    elif(feature_name == "Image"):
+        f = ImageFeature("../../mtree.png")
+        f.shape = p
+        return f
+        
     elif(feature_name == "Vegetation"):
         for a in p.exterior.coords:
             print(a)
         return Vegetation(p, model=AbstractModel("../../models/vegetation/pine_tree/Pine_4m.obj", 0.01, (0, 0)), tree_number=50)
+        
     elif(feature_name == "Urban"):
         pass
     elif(feature_name == "WaterArea"):
@@ -201,6 +212,8 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
         print("Res x %d; res y %d" % (res_x, res_y))
         
         my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1]), scaling) for i in range(len(shapes))]
+
+        print(my_features[1].shape)
         
         env = Environment(my_features, x=res_x, y=res_y)
         benv = BlendEnvironment((-bb[0], -bb[1]), (res_x, res_y))

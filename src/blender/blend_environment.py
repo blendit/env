@@ -31,7 +31,7 @@ class BlendEnvironment(Environment):
         bpy.ops.mesh.primitive_plane_add(radius=0.5, view_align=False, enter_editmode=False, location=(0, 0, 0), layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
 
         # Resize
-        bpy.ops.transform.resize(value=(self.size_x, self.size_y, 1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        bpy.ops.transform.resize(value=(self.size_x, self.size_y, 20), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
         
         t_x = - self.pos_x + self.size_x/2
         t_y = self.pos_y - self.size_y/2
@@ -78,19 +78,18 @@ class BlendEnvironment(Environment):
         t_y = self.pos_y - self.size_y/2
 
         # Import models
-        for model in env.models:
+         for model in env.models:
             bpy.ops.import_scene.obj(filepath=model.model.path, axis_forward='-Z', axis_up='Y')
             
             self.models.append((model.model.size, bpy.context.selected_objects))
 
             s = model.model.size * bpy.context.scene["models_scale"]
             bpy.ops.transform.resize(value=(s, s, s), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
-            #bpy.ops.transform.translate(value=(-14, 14, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
             x, y, z = model.pos3D
             x = x - self.pos_x
             y = - y + self.pos_y
-            z = z / 255
+            z = z * 10 / 255
             bpy.ops.transform.translate(value=(x, y, z), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
     def render(self, final_result):

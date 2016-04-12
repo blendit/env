@@ -76,12 +76,16 @@ class ImageFeature(Feature):
         self.pixels = [pixels[i * width:(i + 1) * width] for i in range(height)]
 
         self.shape = geom.box(0, 0, width, height)
+        self.x = width
+        self.y = height
 
     def z(self, coord):
         (x, y) = coord
         coord = geom.Point(coord)
-        
-        if self.shape.touches(coord) or self.shape.contains(coord):
+
+        if x >= self.x or y >= self.y:
+            return 0
+        elif self.shape.touches(coord) or self.shape.contains(coord):
             return self.pixels[int(y)][int(x)]
         else:
             return 0
