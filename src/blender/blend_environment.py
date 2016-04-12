@@ -73,11 +73,11 @@ class BlendEnvironment(Environment):
 
             s = model.model.size * bpy.context.scene["models_scale"]
             bpy.ops.transform.resize(value=(s, s, s), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
-            bpy.ops.transform.translate(value=(-14, 14, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+            #bpy.ops.transform.translate(value=(-14, 14, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
             x, y, z = model.pos3D
-            x = x * 28 / env.res_x
-            y = y * -28 / env.res_y
+            x = x * 5 / (2*max(env.res_x-1, env.res_y-1)) # 28
+            y = y * -5 / (2*max(env.res_y-1, env.res_x-1)) # -28
             z = z * 7 / 255
             bpy.ops.transform.translate(value=(x, y, z), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 

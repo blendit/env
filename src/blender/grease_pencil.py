@@ -84,7 +84,7 @@ def dist(a, b):
     return (a[0] - b[0])**2 + (a[1] - b[1])**2
 
 
-def gen_feature(feature_name, shape, transl):
+def gen_feature(feature_name, shape, transl, scaling):
     print("Called gen_feature @ %s" % feature_name)
     # let's first translate our feature.
     ip = Polygon(list(shape))  # map(lambda x: (x[0], 4x[1]), shape)))
@@ -104,7 +104,9 @@ def gen_feature(feature_name, shape, transl):
     elif(feature_name == "Roads"):
         pass
     elif(feature_name == "Vegetation"):
-        return Vegetation(p, model=AbstractModel("../../models/vegetation/pine_tree/Pine_4m.obj", 0.01, (0, 0)), tree_number=10)
+        for a in p.exterior.coords:
+            print(a)
+        return Vegetation(p, model=AbstractModel("../../models/vegetation/pine_tree/Pine_4m.obj", 0.01, (0, 0)), tree_number=50)
     elif(feature_name == "Urban"):
         pass
     elif(feature_name == "WaterArea"):
@@ -194,9 +196,10 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
             s = bounds(shape)
             bb = (min(bb[0], s[0]), min(bb[1], s[1]), max(bb[2], s[2]), max(bb[3], s[3]))
         print("Res x %d; res y %d" % ((bb[2] - bb[0]), (bb[3] - bb[1])))
-        my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1])) for i in range(len(shapes))]
+        my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1]), scaling) for i in range(len(shapes))]
         env = Environment(my_features, x=1 + int(bb[2] - bb[0]), y=1 + int(bb[3] - bb[1]))
         benv = BlendEnvironment(resize=max(bb[2] - bb[0], bb[3] - bb[1]) // (2*scaling), translation=False)
+        # scn["models_scale"] = 1 / (max(bb[2] - bb[0], bb[3] - bb[1]) // (2*scaling))
         benv.export_img(env, 2)
         return {'FINISHED'}
 

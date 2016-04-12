@@ -161,11 +161,11 @@ class Vegetation(Feature):
     * models
     * base_model: abstract model used for the vegetation """
 
-    def __init__(self, shape, model=AbstractModel(), tree_number=100):
+    def __init__(self, shape, model=AbstractModel(), tree_number=100, br_coord=(0,0)):
         super().__init__()
         self.base_model = model
         self.shape = shape
-        
+        self.br_coord = br_coord
         self.generate_models(tree_number)
 
     def generate_models(self, number):
@@ -179,7 +179,8 @@ class Vegetation(Feature):
 
             coord = geom.Point((x, y))
             if self.shape.touches(coord) or self.shape.contains(coord):
-                self.models.append(Model((x, y), self.base_model))
+                print("Tree added at %d %d" % (self.br_coord[0] + x, self.br_coord[1] + y))
+                self.models.append(Model((self.br_coord[0] + x, self.br_coord[1] + y), self.base_model))
                 i += 1
             
     def z(self, pos):
