@@ -96,7 +96,7 @@ class MountainImg(Landscape):
                     val = self.img.getpixel((x + self.img_center_x, y + self.img_center_y))
                     mini = min(mini, val)
                     maxi = max(maxi, val)
-        self.coeff = 128 / (maxi - mini)
+        self.coeff = 255 / (maxi - mini)
         self.mini = mini
         print("x, y : %d %d" % (x, y))
         print("A MountainImg, of parameters %d, %d, mode %s, div %s" % (self.center_pos[0], self.center_pos[1], self.img.mode, self.div))

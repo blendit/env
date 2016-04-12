@@ -98,11 +98,9 @@ def gen_feature(feature_name, shape, transl):
         return Mountain(rd, center_z, center_pos)
     elif(feature_name == "MountainImg"):
         center_z = 0
-        center_pos = p.centroid.coords[0]
-        rd = int((max([dist(x, center_pos) for x in p.exterior.coords]) / 2) ** 0.5)
-        print("Radius = %d" % rd)
+        center_pos = p.bounds[0:2]
         print("Center = %d, %d" % (center_pos[0], center_pos[1]))
-        return MountainImg(rd, center_z, center_pos)
+        return MountainImg(p, center=center_pos)
     elif(feature_name == "Roads"):
         pass
     elif(feature_name == "Vegetation"):
@@ -188,16 +186,17 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
     def execute(self, context):
         scn = context.scene
         bpy.ops.view3d.viewnumpad(type='CAMERA', align_active=False)
+        #scaling = max(bb[2] - bb[0], max(bb[2] - bb[0], bb[3] - bb[1])bb[3] - bb[1]) / 28
         scaling = 5
-        shapes = [[(scaling * p.co.x, scaling * p.co.y) for p in bpy.data.grease_pencil[0].layers[i].active_frame.strokes[0].points] for i in range(scn["i"])]
+        shapes = [[(scaling * p.co.x, - scaling * p.co.y) for p in bpy.data.grease_pencil[0].layers[i].active_frame.strokes[0].points] for i in range(scn["i"])]
         bb = bounds(shapes[0])
         for shape in shapes[1:]:
             s = bounds(shape)
             bb = (min(bb[0], s[0]), min(bb[1], s[1]), max(bb[2], s[2]), max(bb[3], s[3]))
+        print("Res x %d; res y %d" % ((bb[2] - bb[0]), (bb[3] - bb[1])))
         my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1])) for i in range(len(shapes))]
-        # print("Res x %d; res y %d" % ((bb[2] - bb[0]), (bb[3] - bb[1])))
         env = Environment(my_features, x=1 + int(bb[2] - bb[0]), y=1 + int(bb[3] - bb[1]))
-        benv = BlendEnvironment(resize=max(bb[2] - bb[0], bb[3] - bb[1]) // (2 * scaling), translation=False)
+        benv = BlendEnvironment(resize=max(bb[2] - bb[0], bb[3] - bb[1]) // (2*scaling), translation=False)
         benv.export_img(env, 2)
         return {'FINISHED'}
 
