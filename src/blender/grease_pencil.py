@@ -187,18 +187,24 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
 
     def execute(self, context):
         scn = context.scene
-        bpy.ops.view3d.viewnumpad(type='CAMERA', align_active=False)
-        #scaling = max(bb[2] - bb[0], max(bb[2] - bb[0], bb[3] - bb[1])bb[3] - bb[1]) / 28
-        scaling = 5
+        # bpy.ops.view3d.viewnumpad(type='CAMERA', align_active=False)
+        # scaling = max(bb[2] - bb[0], max(bb[2] - bb[0], bb[3] - bb[1])bb[3] - bb[1]) / 28
+        scaling = 1
         shapes = [[(scaling * p.co.x, - scaling * p.co.y) for p in bpy.data.grease_pencil[0].layers[i].active_frame.strokes[0].points] for i in range(scn["i"])]
         bb = bounds(shapes[0])
         for shape in shapes[1:]:
             s = bounds(shape)
             bb = (min(bb[0], s[0]), min(bb[1], s[1]), max(bb[2], s[2]), max(bb[3], s[3]))
-        print("Res x %d; res y %d" % ((bb[2] - bb[0]), (bb[3] - bb[1])))
+
+        res_x = int(bb[2] - bb[0])
+        res_y = int(bb[3] - bb[1])
+        print("Res x %d; res y %d" % (res_x, res_y))
+        
         my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1]), scaling) for i in range(len(shapes))]
-        env = Environment(my_features, x=1 + int(bb[2] - bb[0]), y=1 + int(bb[3] - bb[1]))
-        benv = BlendEnvironment(resize=max(bb[2] - bb[0], bb[3] - bb[1]) // (2*scaling), translation=False)
+        
+        env = Environment(my_features, x=res_x, y=res_y)
+        benv = BlendEnvironment((-bb[0], -bb[1]), (res_x, res_y))
+        
         # scn["models_scale"] = 1 / (max(bb[2] - bb[0], bb[3] - bb[1]) // (2*scaling))
         benv.export_img(env, 2)
         return {'FINISHED'}
