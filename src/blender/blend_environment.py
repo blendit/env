@@ -52,7 +52,8 @@ class BlendEnvironment(Environment):
             bpy.ops.object.modifier_add(type='SUBSURF')
         
         bpy.data.lamps['Lamp'].type = 'SUN'
-
+        bpy.ops.object.modifier_apply()
+        
     def import_env(self, pickle_path, res):
         f = open(pickle_path, 'rb')
         env = pickle.load(f)
