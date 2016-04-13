@@ -94,7 +94,7 @@ class MountainImg(Landscape):
             for y in range(int(self.bb[3] - self.bb[1])):
                 c = geom.Point((x, y))
                 if(c.within(self.shape)):
-                    print(x,y,val)
+                    # print(x,y,val)
                     val = self.img.getpixel((x + self.img_center_x, y + self.img_center_y))
                     mini = min(mini, val)
                     maxi = max(maxi, val)
