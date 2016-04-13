@@ -116,7 +116,7 @@ def gen_feature(feature_name, shape, transl, scaling):
     elif(feature_name == "Vegetation"):
         for a in p.exterior.coords:
             print(a)
-        return Vegetation(p, model=AbstractModel("../../models/vegetation/pine_tree/Pine_4m.obj", 0.02, (0, 0)), tree_number=50)
+        return Vegetation(p, model=AbstractModel("../../models/vegetation/pine_tree/Pine_4m.obj", 0.02, (0, 0)), tree_number=250)
         
     elif(feature_name == "Urban"):
         pass

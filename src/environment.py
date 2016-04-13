@@ -12,11 +12,15 @@ class Environment:
         self.tree = FeatureTree(features)
         self.models = self.tree.models
 
-        # compute z coordinate
+        # compute z coordinate and gather abstract models
+        self.abstract_models = set()
+        
         for model in self.models:
             (x, y) = model.pos
             z = self.tree.z(model.pos)
             model.pos3D = (x, y, z)
+
+            self.abstract_models.add(model.model)
         
         self.heightmap_init = False
 
