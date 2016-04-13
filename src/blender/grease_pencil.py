@@ -28,13 +28,35 @@ from src.feature import ImageFeature
 
 feature_list = []
 # if we put feature_list into scn, it is transformed into a read-only IDPropertyArray :'(
+benv = BlendEnvironment((0, 0), (0, 0))
+# could probably put this in context
 
 
 def upd_enum(self, context):
     print(self['MyEnum'])
 
+def update_scale(self, context):#, blend_env):
+    for (s, models) in benv.models:
+        for model in models:
+            model.scale[0] = s * context.scene.model_scaling
+            model.scale[1] = s * context.scene.model_scaling
+            model.scale[2] = s * context.scene.model_scaling
+
+
 
 def initSceneProperties(scn):
+    bpy.types.Scene.model_number = bpy.props.IntProperty(name="Number of models", default=20, min=1, max=400)
+    scn["model_number"] = 100
+    bpy.types.Scene.model_scaling = bpy.props.FloatProperty(name="Scaling of models", default=1., min=0, update=update_scale)
+    scn["model_scaling"] = 1
+    bpy.types.Scene.model_path = bpy.props.StringProperty(
+        name="Patht to models",
+        description="Path to models",
+        default="../../models/vegetation/Pine_4m.obj",
+        maxlen=1024,
+        subtype='FILE_PATH')
+    scn["model_path"] = "../../models/vegetation/Pine_4m.obj"
+
     myItems = [('MountainImg', 'MountainImg', 'MountainImg'),
                # ('Mountain', 'Mountain', 'Mountain'),
                ('Vegetation', 'Vegetation', 'Vegetation'),
@@ -86,7 +108,7 @@ def dist(a, b):
     return (a[0] - b[0])**2 + (a[1] - b[1])**2
 
 
-def gen_feature(feature_name, shape, transl, scaling):
+def gen_feature(feature_name, shape, transl, scaling, scn):
     print("Called gen_feature @ %s" % feature_name)
     # let's first translate our feature.
     ip = Polygon(list(shape))  # map(lambda x: (x[0], 4x[1]), shape)))
@@ -98,26 +120,21 @@ def gen_feature(feature_name, shape, transl, scaling):
         print("Radius = %d" % rd)
         print("Center = %d, %d" % (center_pos[0], center_pos[1]))
         return Mountain(rd, center_z, center_pos)
-        
     elif(feature_name == "MountainImg"):
         center_z = 0
         center_pos = p.bounds[0:2]
         print("Center = %d, %d" % (center_pos[0], center_pos[1]))
         return MountainImg(p, center=center_pos)
-        
     elif(feature_name == "Roads"):
         pass
-        
     elif(feature_name == "Image"):
         f = ImageFeature("../../hm.png")
         f.shape = p
         return f
-        
     elif(feature_name == "Vegetation"):
         for a in p.exterior.coords:
             print(a)
-        return Vegetation(p, model=AbstractModel("../../models/vegetation/pine_tree/Pine_4m.obj", 0.02, (0, 0)), tree_number=250)
-        
+        return Vegetation(p, model=AbstractModel(scn["model_path"], 0.02, (0, 0)), tree_number=scn["model_number"])
     elif(feature_name == "Urban"):
         pass
     elif(feature_name == "WaterArea"):
@@ -197,21 +214,28 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
     bl_label = "Generate environment"
 
     def execute(self, context):
+        global benv
         scn = context.scene
         # bpy.ops.view3d.viewnumpad(type='CAMERA', align_active=False)
         # scaling = max(bb[2] - bb[0], max(bb[2] - bb[0], bb[3] - bb[1])bb[3] - bb[1]) / 28
         scaling = 1
-        shapes = [[(scaling * p.co.x, - scaling * p.co.y) for p in bpy.data.grease_pencil[0].layers[i].active_frame.strokes[0].points] for i in range(scn["i"])]
+        shapes = [[] for i in range(scn["i"])]
+        for i in range(scn["i"]):
+            try:
+                for p in bpy.data.grease_pencil[0].layers[i].active_frame.strokes[0].points:
+                    shapes[i].append((scaling * p.co.x, - scaling * p.co.y))
+            except AttributeError:
+                pass
         bb = bounds(shapes[0])
         for shape in shapes[1:]:
-            s = bounds(shape)
-            bb = (min(bb[0], s[0]), min(bb[1], s[1]), max(bb[2], s[2]), max(bb[3], s[3]))
-
+            if(shape != []):
+                s = bounds(shape)
+                bb = (min(bb[0], s[0]), min(bb[1], s[1]), max(bb[2], s[2]), max(bb[3], s[3]))
         res_x = int(bb[2] - bb[0])
         res_y = int(bb[3] - bb[1])
         print("Res x %d; res y %d" % (res_x, res_y))
         
-        my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1]), scaling) for i in range(len(shapes))]
+        my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1]), scaling, scn) for i in range(len(shapes)) if shapes[i] != []]
         
         env = Environment(my_features, x=res_x, y=res_y)
         benv = BlendEnvironment((-bb[0], -bb[1]), (res_x, res_y))
@@ -242,6 +266,10 @@ class FeaturePanel(bpy.types.Panel):
         layout = self.layout
         scn = context.scene
         layout.prop(scn, 'MyEnum')
+
+        layout.prop(scn, 'model_number')
+        layout.prop(scn, 'model_scaling')
+        layout.prop(scn, 'model_path')
 
 
 if __name__ == "__main__":

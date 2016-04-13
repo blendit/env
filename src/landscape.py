@@ -94,11 +94,16 @@ class MountainImg(Landscape):
             for y in range(int(self.bb[3] - self.bb[1])):
                 c = geom.Point((x, y))
                 if(c.within(self.shape)):
+                    print(x,y,val)
                     val = self.img.getpixel((x + self.img_center_x, y + self.img_center_y))
                     mini = min(mini, val)
                     maxi = max(maxi, val)
-        self.coeff = 255 / (maxi - mini)
-        self.mini = mini
+        try:
+            self.coeff = 255 / (maxi - mini)
+            self.mini = mini
+        except ZeroDivisionError:
+            self.coeff = 1
+            self.mini = 0
         print("x, y : %d %d" % (x, y))
         print("A MountainImg, of parameters %d, %d, mode %s, div %s" % (self.center_pos[0], self.center_pos[1], self.img.mode, self.div))
 
