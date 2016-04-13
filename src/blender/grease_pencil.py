@@ -35,7 +35,7 @@ def upd_enum(self, context):
 
 
 def initSceneProperties(scn):
-    myItems = [('Mountain', 'Mountain', 'Mountain'),
+    myItems = [# ('Mountain', 'Mountain', 'Mountain'),
                ('MountainImg', 'MountainImg', 'MountainImg'),
                ('Vegetation', 'Vegetation', 'Vegetation'),
                ('Image', 'Image', 'Image'),
@@ -109,14 +109,14 @@ def gen_feature(feature_name, shape, transl, scaling):
         pass
         
     elif(feature_name == "Image"):
-        f = ImageFeature("../../mtree.png")
+        f = ImageFeature("../../hm.png")
         f.shape = p
         return f
         
     elif(feature_name == "Vegetation"):
         for a in p.exterior.coords:
             print(a)
-        return Vegetation(p, model=AbstractModel("../../models/vegetation/pine_tree/Pine_4m.obj", 0.01, (0, 0)), tree_number=50)
+        return Vegetation(p, model=AbstractModel("../../models/vegetation/pine_tree/Pine_4m.obj", 0.02, (0, 0)), tree_number=50)
         
     elif(feature_name == "Urban"):
         pass
@@ -212,8 +212,6 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
         print("Res x %d; res y %d" % (res_x, res_y))
         
         my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1]), scaling) for i in range(len(shapes))]
-
-        print(my_features[1].shape)
         
         env = Environment(my_features, x=res_x, y=res_y)
         benv = BlendEnvironment((-bb[0], -bb[1]), (res_x, res_y))

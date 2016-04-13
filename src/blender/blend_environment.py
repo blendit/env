@@ -31,7 +31,7 @@ class BlendEnvironment(Environment):
         bpy.ops.mesh.primitive_plane_add(radius=0.5, view_align=False, enter_editmode=False, location=(0, 0, 0), layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
 
         # Resize
-        bpy.ops.transform.resize(value=(self.size_x, self.size_y, 20), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        bpy.ops.transform.resize(value=(self.size_x/res, self.size_y/res, 20), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
         
         t_x = - self.pos_x + self.size_x/2
         t_y = self.pos_y - self.size_y/2
@@ -43,6 +43,8 @@ class BlendEnvironment(Environment):
         bpy.ops.mesh.subdivide(number_cuts=maxi, smoothness=0)
         for x in range(res - 1):
             bpy.ops.mesh.subdivide(smoothness=0)
+        bpy.ops.transform.resize(value=(res, res, 1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+
         bpy.ops.object.editmode_toggle()
         
         # Add heightmap
@@ -74,11 +76,8 @@ class BlendEnvironment(Environment):
         env.export_heightmap(image)
         self.create_terrain(image, res)
 
-        t_x = - self.pos_x + self.size_x/2
-        t_y = self.pos_y - self.size_y/2
-
         # Import models
-         for model in env.models:
+        for model in env.models:
             bpy.ops.import_scene.obj(filepath=model.model.path, axis_forward='-Z', axis_up='Y')
             
             self.models.append((model.model.size, bpy.context.selected_objects))
