@@ -91,9 +91,9 @@ class Vegetation(Feature):
     * models
     * base_model: abstract model used for the vegetation """
 
-    def __init__(self, model=AbstractModel(), pos=(0, 0), size=(1000, 1000), tree_number=100):
+    def __init__(self, model_list=[AbstractModel()], pos=(0, 0), size=(1000, 1000), tree_number=100):
         super().__init__()
-        self.base_model = model
+        self.l_base_model = model_list
         self.pos = pos
         
         self.set_influence_map([[1.0] * size[1]] * size[0])
@@ -111,12 +111,12 @@ class Vegetation(Feature):
                                    (pos[0], pos[1] + s_y)])
 
     def generate_models(self, size_x, size_y, number):
-        self.model = []
+        self.models = []
         for i in range(number):
             x = randrange(self.pos[0], self.pos[0] + size_x)
             y = randrange(self.pos[1], self.pos[1] + size_y)
 
-            self.models.append(Model((x, y), self.base_model))
+            self.models.append(Model((x, y), random.choice(self.l_base_model)))
 
     def z(self, pos):
         return 0
