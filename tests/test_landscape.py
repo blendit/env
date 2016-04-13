@@ -52,7 +52,7 @@ class TestRoads(unittest.TestCase):
 class TestVegetation(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.gen_model = AbstractModel("test.3ds", 2, (0, 0))
+        self.gen_model = [AbstractModel("test.3ds", 2, (0, 0))]
         self.n1 = 100
         self.v1 = Vegetation(self.gen_model, (20, 20), (100, 100), self.n1)
 
