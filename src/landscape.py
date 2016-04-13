@@ -66,7 +66,7 @@ from random import choice
 class MountainImg(Landscape):
     """A mountain extracted from heightmaps"""
 
-    def __init__(self, shape, center=(0,0)):
+    def __init__(self, shape, center=(0, 0)):
         """NB: len(freqs) should equal len(amplis)"""
         super(MountainImg, self).__init__()
         center_ = geom.Point(*center)
@@ -161,7 +161,7 @@ class Vegetation(Feature):
     * models
     * base_model: abstract model used for the vegetation """
 
-    def __init__(self, shape, model=AbstractModel(), tree_number=100, br_coord=(0,0)):
+    def __init__(self, shape, model=AbstractModel(), tree_number=100, br_coord=(0, 0)):
         super().__init__()
         self.base_model = model
         self.shape = shape
