@@ -9,10 +9,15 @@ from src.environment import Environment
 class BlendEnvironment(Environment):
     """Link between environment and blender"""
 
-    def __init__(self, resize=14, translation=True):
+    def __init__(self, pos, size):
         self.models = []
-        self.resize = resize
-        self.translation = translation
+        (pos_x, pos_y) = pos
+        (size_x, size_y) = size
+        
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.size_x = size_x
+        self.size_y = size_y
 
     def create_terrain(self, image_path, res):
         image_dir, image_name = os.path.split(image_path)
@@ -23,18 +28,22 @@ class BlendEnvironment(Environment):
         i.close()
 
         bpy.ops.object.delete(use_global=False)
-        bpy.ops.mesh.primitive_plane_add(radius=1, view_align=False, enter_editmode=False, location=(0, 0, 0), layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
+        bpy.ops.mesh.primitive_plane_add(radius=0.5, view_align=False, enter_editmode=False, location=(0, 0, 0), layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
 
-        if(self.translation):
-            bpy.ops.transform.translate(value=(0, 0, 3.5), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
         # Resize
-        bpy.ops.transform.resize(value=(self.resize, self.resize, self.resize), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        bpy.ops.transform.resize(value=(self.size_x / res, self.size_y / res, 20), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        
+        t_x = - self.pos_x + self.size_x / 2
+        t_y = self.pos_y - self.size_y / 2
+        bpy.ops.transform.translate(value=(t_x, t_y, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
         # Subdivide
         bpy.ops.object.editmode_toggle()
         bpy.ops.mesh.subdivide(number_cuts=maxi, smoothness=0)
         for x in range(res - 1):
             bpy.ops.mesh.subdivide(smoothness=0)
+        bpy.ops.transform.resize(value=(res, res, 1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+
         bpy.ops.object.editmode_toggle()
         
         # Add heightmap
@@ -49,10 +58,12 @@ class BlendEnvironment(Environment):
             ob.modifiers["Displace"].texture = bpy.data.textures[image]
             ob.modifiers["Displace"].strength = 0.5
             ob.modifiers["Displace"].texture_coords = 'UV'
+            ob.modifiers["Displace"].mid_level = 0
+            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Displace")
             bpy.ops.object.modifier_add(type='SUBSURF')
-        
+            
         bpy.data.lamps['Lamp'].type = 'SUN'
-
+        
     def import_env(self, pickle_path, res):
         f = open(pickle_path, 'rb')
         env = pickle.load(f)
@@ -70,14 +81,13 @@ class BlendEnvironment(Environment):
             
             self.models.append((model.model.size, bpy.context.selected_objects))
 
-            s = model.model.size * bpy.context.scene.models_scale
+            s = model.model.size * bpy.context.scene["models_scale"]
             bpy.ops.transform.resize(value=(s, s, s), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
-            bpy.ops.transform.translate(value=(-14, 14, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
             x, y, z = model.pos3D
-            x = x * 28 / env.res_x
-            y = y * -28 / env.res_y
-            z = z * 7 / 255
+            x = x - self.pos_x
+            y = - y + self.pos_y
+            z = z * 10 / 255
             bpy.ops.transform.translate(value=(x, y, z), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
     def render(self, final_result):

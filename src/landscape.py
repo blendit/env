@@ -66,42 +66,48 @@ from random import choice
 class MountainImg(Landscape):
     """A mountain extracted from heightmaps"""
 
-    def __init__(self, radius, center_z, center_pos=(0, 0)):
+    def __init__(self, shape, center=(0, 0), path="../../models/mountains/"):
         """NB: len(freqs) should equal len(amplis)"""
         super(MountainImg, self).__init__()
-        self.radius = int(numpy.sqrt(radius))**2  # rescaling
-        center = geom.Point(*center_pos)
-        self.center_pos = numpy.array(center)
-        self.center_z = center_z
+        center_ = geom.Point(*center)
+        self.center_pos = numpy.array(center_)
+        self.center_z = 0
+        self.shape = shape
+        self.path = path
         # By default, buffer approximates the circle with a regular 16-gon
-        self.shape = center.buffer(radius)
-        self.img = Image.open("../../models/mountains/" + random.choice(os.listdir("../../models/mountains/")))
-        while(max(self.img.size[0], self.img.size[1]) < 2 * radius):
-            print("(MountainImg) Image to small, (want %d) trying something else" % (2 * radius))
-            self.img = Image.open("../../models/mountains/" + choice(os.listdir("../../models/mountains/")))
-        self.img_center_x = random.randint(self.radius, self.img.size[0] - self.radius)
-        self.img_center_y = random.randint(self.radius, self.img.size[1] - self.radius)
+        self.bb = self.shape.bounds
+        self.img = Image.open(self.path + random.choice(os.listdir(self.path)))
+        while(self.img.size[0] < self.bb[2] and self.img.size[1] < self.bb[3]):
+            print("(MountainImg) Image to small, (want %d x %d) trying something else" % (self.bb[2], self.bb[3]))
+            self.img = Image.open(self.path + choice(os.listdir(self.path)))
+        self.img_center_x = random.randint(0, self.img.size[0] - (self.bb[2] - self.bb[0]))
+        self.img_center_y = random.randint(0, self.img.size[1] - (self.bb[3] - self.bb[1]))
         if(self.img.mode == 'I'):
             self.div = 255
         else:
             self.div = 1
-        mini = self.img.getpixel((self.img_center_x + self.radius, self.img_center_y + self.radius))
+        mini = self.img.getpixel((self.img_center_x + (self.bb[2] - self.bb[0]) // 2, self.img_center_y + (self.bb[3] - self.bb[1]) // 2))
         maxi = mini
-        for x in range(self.img_center_x, self.img_center_x + 2 * radius):
-            for y in range(self.img_center_y, self.img_center_y + 2 * radius):
-                if((x - self.img_center_x)**2 + (y - self.img_center_y)**2 <= self.radius**2):
-                    val = self.img.getpixel((x, y))
+        print(mini, maxi)
+        print("Center at : " + str(self.center_pos))
+        for x in range(int(self.bb[2] - self.bb[0])):
+            for y in range(int(self.bb[3] - self.bb[1])):
+                c = geom.Point((x, y))
+                if(c.within(self.shape)):
+                    val = self.img.getpixel((x + self.img_center_x, y + self.img_center_y))
                     mini = min(mini, val)
                     maxi = max(maxi, val)
-        self.coeff = 128 / (maxi - mini)
+        self.coeff = 255 / (maxi - mini)
         self.mini = mini
-        # print("A MountainImg, of parameters %d and %d, %d, mode %s, div %s" % (radius, center_pos[0], center_pos[1], self.img.mode, self.div))
+        print("x, y : %d %d" % (x, y))
+        print("A MountainImg, of parameters %d, %d, mode %s, div %s" % (self.center_pos[0], self.center_pos[1], self.img.mode, self.div))
 
     def z(self, coord):
         """Generation of a height given a plane coordinate. Formula from [GGP+15], subsection 4.1"""
         x = coord[0] - self.center_pos[0]
         y = coord[1] - self.center_pos[1]
-        if(x**2 + y**2 <= self.radius**2):
+        c = geom.Point((x, y))
+        if(self.shape.touches(c) or self.shape.contains(c)):
             return int((self.img.getpixel((self.img_center_x + x, self.img_center_y + y)) - self.mini) * self.coeff)
         else:
             return 0
@@ -156,11 +162,11 @@ class Vegetation(Feature):
     * models
     * base_model: abstract model used for the vegetation """
 
-    def __init__(self, shape, model=AbstractModel(), tree_number=100):
+    def __init__(self, shape, model=AbstractModel(), tree_number=100, br_coord=(0, 0)):
         super().__init__()
         self.base_model = model
         self.shape = shape
-        
+        self.br_coord = br_coord
         self.generate_models(tree_number)
 
     def generate_models(self, number):
@@ -169,12 +175,13 @@ class Vegetation(Feature):
 
         i = 0
         while i < number:
-            x = randrange(minx, maxx)
-            y = randrange(miny, maxy)
+            x = randrange(int(minx), int(maxx))
+            y = randrange(int(miny), int(maxy))
 
             coord = geom.Point((x, y))
             if self.shape.touches(coord) or self.shape.contains(coord):
-                self.models.append(Model((x, y), self.base_model))
+                print("Tree added at %d %d" % (self.br_coord[0] + x, self.br_coord[1] + y))
+                self.models.append(Model((self.br_coord[0] + x, self.br_coord[1] + y), self.base_model))
                 i += 1
             
     def z(self, pos):
