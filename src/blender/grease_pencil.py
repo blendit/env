@@ -35,13 +35,13 @@ benv = BlendEnvironment((0, 0), (0, 0))
 def upd_enum(self, context):
     print(self['MyEnum'])
 
-def update_scale(self, context):#, blend_env):
+
+def update_scale(self, context):
     for (s, models) in benv.models:
         for model in models:
             model.scale[0] = s * context.scene.model_scaling
             model.scale[1] = s * context.scene.model_scaling
             model.scale[2] = s * context.scene.model_scaling
-
 
 
 def initSceneProperties(scn):
