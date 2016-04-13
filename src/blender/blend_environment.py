@@ -75,20 +75,40 @@ class BlendEnvironment(Environment):
         env.export_heightmap(image)
         self.create_terrain(image, res)
 
-        # Import models
-        for model in env.models:
-            bpy.ops.import_scene.obj(filepath=model.model.path, axis_forward='-Z', axis_up='Y')
-            
-            self.models.append((model.model.size, bpy.context.selected_objects))
-
-            s = model.model.size * bpy.context.scene["models_scale"]
+        # Import abstract models as reference objects
+        amodel_dict = {}
+        for amodel in env.abstract_models:
+            bpy.ops.import_scene.obj(filepath=amodel.path, axis_forward='-Z', axis_up='Y')
+            # Resize
+            s = amodel.size * bpy.context.scene["models_scale"]
             bpy.ops.transform.resize(value=(s, s, s), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
 
+            amodel_dict[amodel] = bpy.context.selected_objects
+
+        # Duplicate reference objects
+        for model in env.models:
+            amodel = model.model
+
+            # select model to duplicate
+            bpy.ops.object.select_all(action='DESELECT')
+            for o in amodel_dict[amodel]:
+                o.select = True
+
+            # duplicate
             x, y, z = model.pos3D
             x = x - self.pos_x
             y = - y + self.pos_y
             z = z * 10 / 255
-            bpy.ops.transform.translate(value=(x, y, z), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+            bpy.ops.object.duplicate_move(OBJECT_OT_duplicate={"linked":False, "mode":'TRANSLATION'}, TRANSFORM_OT_translate={"value":(x, y, z), "constraint_axis":(False, False, False), "constraint_orientation":'GLOBAL', "mirror":False, "proportional":'DISABLED', "proportional_edit_falloff":'SMOOTH', "proportional_size":1, "snap":False, "snap_target":'CLOSEST', "snap_point":(0, 0, 0), "snap_align":False, "snap_normal":(0, 0, 0), "gpencil_strokes":False, "texture_space":False, "remove_on_cancel":False, "release_confirm":False})
+
+            self.models.append((amodel.size, bpy.context.selected_objects))
+
+        # Delete reference objects
+        bpy.ops.object.select_all(action='DESELECT')
+        for amodel, objs in amodel_dict.items():
+            for o in objs:
+                o.select = True
+        bpy.ops.object.delete()
 
     def render(self, final_result):
         bpy.context.scene.render.filepath = final_result
