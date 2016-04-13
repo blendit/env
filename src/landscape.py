@@ -180,7 +180,6 @@ class Vegetation(Feature):
 
             coord = geom.Point((x, y))
             if self.shape.touches(coord) or self.shape.contains(coord):
-                print("Tree added at %d %d" % (self.br_coord[0] + x, self.br_coord[1] + y))
                 self.models.append(Model((self.br_coord[0] + x, self.br_coord[1] + y), self.base_model))
                 i += 1
             
