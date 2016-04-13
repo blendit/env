@@ -27,6 +27,8 @@ from src.feature import ImageFeature
 # nb, can change gen_name(i) in id ? maybe not...
 
 feature_list = []
+model_number_list = []
+image_path_list = []
 # if we put feature_list into scn, it is transformed into a read-only IDPropertyArray :'(
 benv = BlendEnvironment((0, 0), (0, 0))
 # could probably put this in context
@@ -56,7 +58,13 @@ def initSceneProperties(scn):
         maxlen=1024,
         subtype='FILE_PATH')
     scn["model_path"] = "../../models/vegetation/Pine_4m.obj"
-
+    bpy.types.Scene.image_path = bpy.props.StringProperty(
+        name="Patht to models",
+        description="Path to models",
+        default="../../hm.png",
+        maxlen=1024,
+        subtype='FILE_PATH')
+    scn["image_path"] = "../../hm.png"
     myItems = [('MountainImg', 'MountainImg', 'MountainImg'),
                # ('Mountain', 'Mountain', 'Mountain'),
                ('Vegetation', 'Vegetation', 'Vegetation'),
@@ -108,7 +116,7 @@ def dist(a, b):
     return (a[0] - b[0])**2 + (a[1] - b[1])**2
 
 
-def gen_feature(feature_name, shape, transl, scaling, scn):
+def gen_feature(feature_name, model_number, image_path, shape, transl, scaling, scn):
     print("Called gen_feature @ %s" % feature_name)
     # let's first translate our feature.
     ip = Polygon(list(shape))  # map(lambda x: (x[0], 4x[1]), shape)))
@@ -128,13 +136,13 @@ def gen_feature(feature_name, shape, transl, scaling, scn):
     elif(feature_name == "Roads"):
         pass
     elif(feature_name == "Image"):
-        f = ImageFeature("../../hm.png")
+        f = ImageFeature(image_path)
         f.shape = p
         return f
     elif(feature_name == "Vegetation"):
         for a in p.exterior.coords:
             print(a)
-        return Vegetation(p, model=AbstractModel(scn["model_path"], 0.02, (0, 0)), tree_number=scn["model_number"])
+        return Vegetation(p, model=AbstractModel(scn["model_path"], 0.02, (0, 0)), tree_number=model_number)
     elif(feature_name == "Urban"):
         pass
     elif(feature_name == "WaterArea"):
@@ -184,6 +192,8 @@ class OBJECT_OT2_ToolsButton(bpy.types.Operator):
         # shape_2d = [(p.co.x, p.co.y) for p in bpy.data.grease_pencil[0].layers[scn["i"]].active_frame.strokes[0].points]
         # feature_list.append(gen_feature(scn["myItems"][scn["MyEnum"]][0], shape_2d))
         feature_list.append(scn["myItems"][scn["MyEnum"]][0])
+        model_number_list.append(scn["model_number"])
+        image_path_list.append(scn["image_path"])
         scn["i"] += 1
         bpy.ops.gpencil.layer_add()
         return {'FINISHED'}
@@ -235,7 +245,7 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
         res_y = int(bb[3] - bb[1])
         print("Res x %d; res y %d" % (res_x, res_y))
         
-        my_features = [gen_feature(feature_list[i], shapes[i], (-bb[0], -bb[1]), scaling, scn) for i in range(len(shapes)) if shapes[i] != []]
+        my_features = [gen_feature(feature_list[i], model_number_list[i], image_path_list[i], shapes[i], (-bb[0], -bb[1]), scaling, scn) for i in range(len(shapes)) if shapes[i] != []]
         
         env = Environment(my_features, x=res_x, y=res_y)
         benv = BlendEnvironment((-bb[0], -bb[1]), (res_x, res_y))
@@ -267,11 +277,33 @@ class FeaturePanel(bpy.types.Panel):
         scn = context.scene
         layout.prop(scn, 'MyEnum')
 
+
+class EnvParamPanel(bpy.types.Panel):
+    bl_category = "ENV"
+    bl_label = "env param panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+
+    def draw(self, context):
+        layout = self.layout
+        scn = context.scene
         layout.prop(scn, 'model_number')
         layout.prop(scn, 'model_scaling')
         layout.prop(scn, 'model_path')
 
 
+class ImgParamPanel(bpy.types.Panel):
+    bl_category = "ENV"
+    bl_label = "img param panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+
+    def draw(self, context):
+        layout = self.layout
+        scn = context.scene
+        layout.prop(scn, 'image_path')
+
+        
 if __name__ == "__main__":
     initSceneProperties(bpy.context.scene)
     bpy.utils.register_module(__name__)
