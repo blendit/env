@@ -31,12 +31,11 @@ class BlendEnvironment(Environment):
         bpy.ops.mesh.primitive_plane_add(radius=0.5, view_align=False, enter_editmode=False, location=(0, 0, 0), layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
 
         # Resize
-        bpy.ops.transform.resize(value=(self.size_x/res, self.size_y/res, 20), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        bpy.ops.transform.resize(value=(self.size_x / res, self.size_y / res, 20), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
         
-        t_x = - self.pos_x + self.size_x/2
-        t_y = self.pos_y - self.size_y/2
+        t_x = - self.pos_x + self.size_x / 2
+        t_y = self.pos_y - self.size_y / 2
         bpy.ops.transform.translate(value=(t_x, t_y, 0), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
-
 
         # Subdivide
         bpy.ops.object.editmode_toggle()
@@ -60,10 +59,10 @@ class BlendEnvironment(Environment):
             ob.modifiers["Displace"].strength = 0.5
             ob.modifiers["Displace"].texture_coords = 'UV'
             ob.modifiers["Displace"].mid_level = 0
+            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Displace")
             bpy.ops.object.modifier_add(type='SUBSURF')
             
         bpy.data.lamps['Lamp'].type = 'SUN'
-        #bpy.ops.object.modifier_apply()
         
     def import_env(self, pickle_path, res):
         f = open(pickle_path, 'rb')

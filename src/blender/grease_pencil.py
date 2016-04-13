@@ -35,8 +35,8 @@ def upd_enum(self, context):
 
 
 def initSceneProperties(scn):
-    myItems = [# ('Mountain', 'Mountain', 'Mountain'),
-               ('MountainImg', 'MountainImg', 'MountainImg'),
+    myItems = [('MountainImg', 'MountainImg', 'MountainImg'),
+               # ('Mountain', 'Mountain', 'Mountain'),
                ('Vegetation', 'Vegetation', 'Vegetation'),
                ('Image', 'Image', 'Image'),
                ('Urban', 'Urban', 'Urban'),
