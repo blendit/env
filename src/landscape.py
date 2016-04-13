@@ -66,19 +66,20 @@ from random import choice
 class MountainImg(Landscape):
     """A mountain extracted from heightmaps"""
 
-    def __init__(self, shape, center=(0, 0)):
+    def __init__(self, shape, center=(0, 0), path="../../models/mountains/"):
         """NB: len(freqs) should equal len(amplis)"""
         super(MountainImg, self).__init__()
         center_ = geom.Point(*center)
         self.center_pos = numpy.array(center_)
         self.center_z = 0
         self.shape = shape
+        self.path = path
         # By default, buffer approximates the circle with a regular 16-gon
         self.bb = self.shape.bounds
-        self.img = Image.open("../../models/mountains/" + random.choice(os.listdir("../../models/mountains/")))
+        self.img = Image.open(self.path + random.choice(os.listdir(self.path)))
         while(self.img.size[0] < self.bb[2] and self.img.size[1] < self.bb[3]):
             print("(MountainImg) Image to small, (want %d x %d) trying something else" % (self.bb[2], self.bb[3]))
-            self.img = Image.open("../../models/mountains/" + choice(os.listdir("../../models/mountains/")))
+            self.img = Image.open(self.path + choice(os.listdir(self.path)))
         self.img_center_x = random.randint(0, self.img.size[0] - (self.bb[2] - self.bb[0]))
         self.img_center_y = random.randint(0, self.img.size[1] - (self.bb[3] - self.bb[1]))
         if(self.img.mode == 'I'):

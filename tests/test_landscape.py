@@ -2,7 +2,7 @@ import numpy
 import unittest
 from tests.base import FeatureTest, compare_imgs
 
-from src.landscape import Mountain, Road, RoadNetwork, Vegetation
+from src.landscape import Mountain, Road, RoadNetwork, Vegetation, MountainImg
 from src.height_map import HeightMap
 from src.feature_tree import FeatureTree
 from src.model import *
@@ -28,6 +28,24 @@ class TestMountain(unittest.TestCase):
         self.assertEqual(self.m1.z(out_of_radius_1), 0)
         self.assertEqual(self.m1.z(out_of_radius_2), 0)
         self.assertEqual(self.m1.z(out_of_radius_3), 0)
+
+    def test_influence_weight(self):
+        self.assertEqual(self.m1.influence((0, 0)), 1)
+
+
+class TestMountainImg(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        super(TestMountainImg, self).__init__(*args, **kwargs)
+        self.m1 = MountainImg(geom.Polygon([(0, 0), (10, 0), (10, 10), (0, 10)]), path="models/mountains/")
+
+    def test_gen_img(self):
+        hm = HeightMap(100, 100, self.m1.z)
+        hm.export("mountain_img.png")
+
+    def test_z(self):
+        z = self.m1.z((0, 0))
+        out_of_radius_1 = self.m1.center_pos + numpy.array(self.m1.bb[2:4] + numpy.array((3, 3)))
+        self.assertEqual(self.m1.z(out_of_radius_1), 0)
 
     def test_influence_weight(self):
         self.assertEqual(self.m1.influence((0, 0)), 1)
