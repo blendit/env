@@ -96,3 +96,11 @@ class ImageFeature(Feature):
             return 1
         else:
             return 0
+
+    def interaction(self):
+        """Give the interaction type of the feature with other features.
+        Can be:
+        * "blend": the mean with the other features
+        * "replace" (default for FeatureLine): one feature erase one other (**only two features**)
+        * "addition": add one feature over another (**only two features**)."""
+        return "replace"
