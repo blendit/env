@@ -96,3 +96,6 @@ class ImageFeature(Feature):
             return 1
         else:
             return 0
+        
+    def interaction(self):
+        return "replace"

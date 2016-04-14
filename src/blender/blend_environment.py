@@ -70,7 +70,7 @@ class BlendEnvironment(Environment):
         f.close()
         self.export_img(env, res)
 
-    def export_img(self, env, res):
+    def export_img(self, env, res, scaling):
         image = "/tmp/env%s.png" % time.strftime("%d_%Hh%Mm%Ss")
         env.export_heightmap(image)
         self.create_terrain(image, res)
@@ -99,7 +99,7 @@ class BlendEnvironment(Environment):
             x = x - self.pos_x
             y = - y + self.pos_y
             z = z * 10 / 255
-            bpy.ops.object.duplicate_move(OBJECT_OT_duplicate={"linked": False, "mode": 'TRANSLATION'}, TRANSFORM_OT_translate={"value": (x, y, z), "constraint_axis": (False, False, False), "constraint_orientation": 'GLOBAL', "mirror": False, "proportional": 'DISABLED', "proportional_edit_falloff": 'SMOOTH', "proportional_size": 1, "snap": False, "snap_target": 'CLOSEST', "snap_point": (0, 0, 0), "snap_align": False, "snap_normal": (0, 0, 0), "gpencil_strokes": False, "texture_space": False, "remove_on_cancel": False, "release_confirm": False})
+            bpy.ops.object.duplicate_move(OBJECT_OT_duplicate={"linked": False, "mode": 'TRANSLATION'}, TRANSFORM_OT_translate={"value": (x / scaling, y / scaling, z), "constraint_axis": (False, False, False), "constraint_orientation": 'GLOBAL', "mirror": False, "proportional": 'DISABLED', "proportional_edit_falloff": 'SMOOTH', "proportional_size": 1, "snap": False, "snap_target": 'CLOSEST', "snap_point": (0, 0, 0), "snap_align": False, "snap_normal": (0, 0, 0), "gpencil_strokes": False, "texture_space": False, "remove_on_cancel": False, "release_confirm": False})
 
             self.models.append((amodel.size, bpy.context.selected_objects))
 

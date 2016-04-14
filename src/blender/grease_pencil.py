@@ -47,12 +47,14 @@ def update_scale(self, context):
 
 
 def initSceneProperties(scn):
+    bpy.types.Scene.scaling = bpy.props.IntProperty(name="Scaling", default=1, min=1, max=10)
+    scn["scaling"] = 1
     bpy.types.Scene.model_number = bpy.props.IntProperty(name="Number of models", default=20, min=1, max=400)
-    scn["model_number"] = 100
-    bpy.types.Scene.model_scaling = bpy.props.FloatProperty(name="Scaling of models", default=1., min=0, update=update_scale)
-    scn["model_scaling"] = 1
+    scn["model_number"] = 20
+    bpy.types.Scene.model_scaling = bpy.props.FloatProperty(name="Scaling of models", default=0.25, min=0, update=update_scale)
+    scn["model_scaling"] = 0.25
     bpy.types.Scene.model_path = bpy.props.StringProperty(
-        name="Patht to models",
+        name="Path to models",
         description="Path to models",
         default="../../models/vegetation/Pine_4m.obj",
         maxlen=1024,
@@ -152,8 +154,8 @@ def gen_feature(feature_name, model_number, image_path, shape, transl, scaling, 
 
 
 class ToolsPanel(bpy.types.Panel):
-    bl_category = "ENV"
-    bl_label = "env panel"
+    bl_category = "Environment"
+    bl_label = "Drawing panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
 
@@ -165,15 +167,17 @@ class ToolsPanel(bpy.types.Panel):
         layout.operator("drawenv.gen")
         layout.operator("drawenv.print")
         layout.operator("drawenv.hide")
+        layout.prop(scn, "scaling")
 
 
 class OBJECT_OT_ToolsButton(bpy.types.Operator):
     bl_idname = "drawenv.execute"
-    bl_label = "Draw something"
+    bl_label = "Draw map"
 
     def execute(self, context):
         self.report({'INFO'}, "starting drawing")
-        bpy.ops.view3d.viewnumpad(type='TOP', align_active=False)
+        bpy.ops.view3d.viewnumpad(type='TOP')
+        # bpy.ops.view3d.view_persportho()
         bpy.ops.gpencil.draw('INVOKE_REGION_WIN', mode="DRAW_POLY")
         change_color(context.scene["i"])
         return {'FINISHED'}
@@ -210,7 +214,7 @@ class OBJECT_OT3_ToolsButton(bpy.types.Operator):
     
 class OBJECT_OT4_ToolsButton(bpy.types.Operator):
     bl_idname = "drawenv.hide"
-    bl_label = "Hide/unhide gpencil"
+    bl_label = "Hide/unhide blueprints"
 
     def execute(self, context):
         scn = context.scene
@@ -228,7 +232,7 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
         scn = context.scene
         # bpy.ops.view3d.viewnumpad(type='CAMERA', align_active=False)
         # scaling = max(bb[2] - bb[0], max(bb[2] - bb[0], bb[3] - bb[1])bb[3] - bb[1]) / 28
-        scaling = 1
+        scaling = scn["scaling"]
         shapes = [[] for i in range(scn["i"])]
         for i in range(scn["i"]):
             try:
@@ -251,7 +255,17 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
         benv = BlendEnvironment((-bb[0], -bb[1]), (res_x, res_y))
         
         # scn["models_scale"] = 1 / (max(bb[2] - bb[0], bb[3] - bb[1]) // (2*scaling))
-        benv.export_img(env, 2)
+        benv.export_img(env, 2, scaling)
+        for (s, models) in benv.models:
+            for model in models:
+                model.scale[0] = s * scn.model_scaling
+                model.scale[1] = s * scn.model_scaling
+                model.scale[2] = s * scn.model_scaling
+        bpy.ops.object.editmode_toggle()
+        bpy.ops.transform.resize(value=(1/scaling, 1/scaling, 1), constraint_axis=(False, False, False), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+        bpy.ops.object.editmode_toggle()
+        for i in range(scn["i"]):
+            bpy.data.grease_pencil[0].layers[i].hide = not bpy.data.grease_pencil["GPencil"].layers[i].hide
         return {'FINISHED'}
 
 
@@ -267,8 +281,8 @@ def bounds(point_list):
     
 
 class FeaturePanel(bpy.types.Panel):
-    bl_category = "ENV"
-    bl_label = "feature panel"
+    bl_category = "Environment"
+    bl_label = "Feature choice"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
 
@@ -279,8 +293,8 @@ class FeaturePanel(bpy.types.Panel):
 
 
 class EnvParamPanel(bpy.types.Panel):
-    bl_category = "ENV"
-    bl_label = "env param panel"
+    bl_category = "Environment"
+    bl_label = "Vegetation parameters"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
 
@@ -293,8 +307,8 @@ class EnvParamPanel(bpy.types.Panel):
 
 
 class ImgParamPanel(bpy.types.Panel):
-    bl_category = "ENV"
-    bl_label = "img param panel"
+    bl_category = "Environment"
+    bl_label = "Image parameters"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
 

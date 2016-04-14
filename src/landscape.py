@@ -77,16 +77,23 @@ class MountainImg(Landscape):
         # By default, buffer approximates the circle with a regular 16-gon
         self.bb = self.shape.bounds
         self.img = Image.open(self.path + random.choice(os.listdir(self.path)))
+        div = False
         while(self.img.size[0] < self.bb[2] and self.img.size[1] < self.bb[3]):
             print("(MountainImg) Image to small, (want %d x %d) trying something else" % (self.bb[2], self.bb[3]))
             self.img = Image.open(self.path + choice(os.listdir(self.path)))
-        self.img_center_x = random.randint(0, self.img.size[0] - (self.bb[2] - self.bb[0]))
-        self.img_center_y = random.randint(0, self.img.size[1] - (self.bb[3] - self.bb[1]))
         if(self.img.mode == 'I'):
-            self.div = 255
+            div = True
+        self.size = self.img.size
+        self.img = self.img.load()
+        self.img_center_x = random.randint(0, self.size[0] - (self.bb[2] - self.bb[0]))
+        self.img_center_y = random.randint(0, self.size[1] - (self.bb[3] - self.bb[1]))
+        if(div):
+            for y in range(self.size[0]):
+                for x in range(self.size[1]):
+                    self.img[y][x] /= 255
         else:
             self.div = 1
-        mini = self.img.getpixel((self.img_center_x + (self.bb[2] - self.bb[0]) // 2, self.img_center_y + (self.bb[3] - self.bb[1]) // 2))
+        mini = self.img[(self.img_center_x + (self.bb[2] - self.bb[0]) // 2, self.img_center_y + (self.bb[3] - self.bb[1]) // 2)]
         maxi = mini
         print(mini, maxi)
         print("Center at : " + str(self.center_pos))
@@ -94,18 +101,22 @@ class MountainImg(Landscape):
             for y in range(int(self.bb[3] - self.bb[1])):
                 c = geom.Point((x, y))
                 if(c.within(self.shape)):
-                    # print(x,y,val)
-                    val = self.img.getpixel((x + self.img_center_x, y + self.img_center_y))
+                    val = self.img[(x + self.img_center_x, y + self.img_center_y)]
+                    # print(val, end=" ")
                     mini = min(mini, val)
                     maxi = max(maxi, val)
+            # print()
         try:
-            self.coeff = 255 / (maxi - mini)
+            self.coeff = maxi / (maxi - mini)
             self.mini = mini
         except ZeroDivisionError:
             self.coeff = 1
             self.mini = 0
+        if(maxi - mini < 10):
+            self.mini = 0
+            self.coeff = 1
         print("x, y : %d %d" % (x, y))
-        print("A MountainImg, of parameters %d, %d, mode %s, div %s" % (self.center_pos[0], self.center_pos[1], self.img.mode, self.div))
+        print("A MountainImg, of parameters %d, %d" % (self.center_pos[0], self.center_pos[1]))
 
     def z(self, coord):
         """Generation of a height given a plane coordinate. Formula from [GGP+15], subsection 4.1"""
@@ -113,7 +124,7 @@ class MountainImg(Landscape):
         y = coord[1] - self.center_pos[1]
         c = geom.Point((x, y))
         if(self.shape.touches(c) or self.shape.contains(c)):
-            return int((self.img.getpixel((self.img_center_x + x, self.img_center_y + y)) - self.mini) * self.coeff)
+            return int((self.img[(self.img_center_x + x, self.img_center_y + y)] - self.mini) * self.coeff)
         else:
             return 0
 

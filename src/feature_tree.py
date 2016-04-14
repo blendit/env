@@ -154,7 +154,8 @@ class ReplaceNode(Node):
         for model in self.background.models:
             pos = model.pos
             if self.foreground.influence(pos) == 0:
-                self.models.append(model)
+                pass
+                #self.models.append(model)
 
     def z(self, pos):
         alpha = self.foreground.influence(pos)
