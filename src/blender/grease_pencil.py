@@ -151,21 +151,6 @@ def gen_feature(feature_name, model_number, image_path, shape, transl, scaling, 
         pass
 
 
-class ToolsPanel(bpy.types.Panel):
-    bl_category = "ENV"
-    bl_label = "env panel"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-
-    def draw(self, context):
-        layout = self.layout
-        scn = context.scene
-        layout.operator("drawenv.execute")
-        layout.operator("drawenv.stop")
-        layout.operator("drawenv.gen")
-        layout.operator("drawenv.print")
-        layout.operator("drawenv.hide")
-
 
 class OBJECT_OT_ToolsButton(bpy.types.Operator):
     bl_idname = "drawenv.execute"
@@ -252,6 +237,8 @@ class OBJECT_OT4_ToolsButton(bpy.types.Operator):
         
         # scn["models_scale"] = 1 / (max(bb[2] - bb[0], bb[3] - bb[1]) // (2*scaling))
         benv.export_img(env, 2)
+        for i in range(scn["i"]):
+            bpy.data.grease_pencil[0].layers[i].hide = not bpy.data.grease_pencil["GPencil"].layers[i].hide
         return {'FINISHED'}
 
 
@@ -267,8 +254,8 @@ def bounds(point_list):
     
 
 class FeaturePanel(bpy.types.Panel):
-    bl_category = "ENV"
-    bl_label = "feature panel"
+    bl_category = "Environment"
+    bl_label = "Feature choice"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
 
@@ -278,9 +265,27 @@ class FeaturePanel(bpy.types.Panel):
         layout.prop(scn, 'MyEnum')
 
 
+class ToolsPanel(bpy.types.Panel):
+    bl_category = "Environment"
+    bl_label = "Environment panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+
+    def draw(self, context):
+        layout = self.layout
+        scn = context.scene
+        layout.operator("drawenv.execute")
+        layout.operator("drawenv.stop")
+        layout.operator("drawenv.gen")
+        layout.operator("drawenv.print")
+        layout.operator("drawenv.hide")
+
+
+
+        
 class EnvParamPanel(bpy.types.Panel):
-    bl_category = "ENV"
-    bl_label = "env param panel"
+    bl_category = "Environment"
+    bl_label = "Model parameters"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
 
@@ -293,8 +298,8 @@ class EnvParamPanel(bpy.types.Panel):
 
 
 class ImgParamPanel(bpy.types.Panel):
-    bl_category = "ENV"
-    bl_label = "img param panel"
+    bl_category = "Environment"
+    bl_label = "Image parameters"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
 

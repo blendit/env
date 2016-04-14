@@ -56,10 +56,10 @@ class BlendEnvironment(Environment):
             
             bpy.ops.object.modifier_add(type='DISPLACE')
             ob.modifiers["Displace"].texture = bpy.data.textures[image]
-            ob.modifiers["Displace"].strength = 0.5
+            ob.modifiers["Displace"].strength = 1
             ob.modifiers["Displace"].texture_coords = 'UV'
             ob.modifiers["Displace"].mid_level = 0
-            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Displace")
+            #bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Displace")
             bpy.ops.object.modifier_add(type='SUBSURF')
             
         bpy.data.lamps['Lamp'].type = 'SUN'
