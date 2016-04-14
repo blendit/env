@@ -49,8 +49,8 @@ def update_scale(self, context):
 def initSceneProperties(scn):
     bpy.types.Scene.model_number = bpy.props.IntProperty(name="Number of models", default=20, min=1, max=400)
     scn["model_number"] = 100
-    bpy.types.Scene.model_scaling = bpy.props.FloatProperty(name="Scaling of models", default=1., min=0, update=update_scale)
-    scn["model_scaling"] = 1
+    bpy.types.Scene.model_scaling = bpy.props.FloatProperty(name="Scaling of models", default=0.3, min=0, update=update_scale)
+    scn["model_scaling"] = 0.3
     bpy.types.Scene.model_path = bpy.props.StringProperty(
         name="Patht to models",
         description="Path to models",
