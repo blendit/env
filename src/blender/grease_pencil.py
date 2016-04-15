@@ -151,7 +151,6 @@ def gen_feature(feature_name, model_number, image_path, shape, transl, scaling, 
         pass
 
 
-
 class OBJECT_OT_ToolsButton(bpy.types.Operator):
     bl_idname = "drawenv.execute"
     bl_label = "Draw something"
@@ -279,8 +278,6 @@ class ToolsPanel(bpy.types.Panel):
         layout.operator("drawenv.gen")
         layout.operator("drawenv.print")
         layout.operator("drawenv.hide")
-
-
 
         
 class EnvParamPanel(bpy.types.Panel):
